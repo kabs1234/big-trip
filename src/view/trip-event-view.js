@@ -1,7 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { createHumanizedMonthDayDate } from '../utils/utils.js';
-
-const addZeroBeforeNumber = (number) => `0${number}`.slice(-2);
+import { addZeroBeforeNumber, createHumanizedMonthDayDate } from '../utils/utils.js';
 
 const createTimeDifference = (startDate, endDate) => {
   const ONE_HOUR_IN_MILLISECONDS = 3.6e6;
@@ -63,7 +61,7 @@ const createTripEventOffers = (tripEvent, tripOffers) => {
   `);
 };
 
-const createTripEvent = (tripEvent, tripOffers) => {
+const createTripEventTemplate = (tripEvent, tripOffers) => {
   const startDate = tripEvent.date_from;
   const yearMonthDayFromStart = startDate.slice(0, 10);
   const startFullDate = startDate.slice(0, 16);
@@ -107,28 +105,17 @@ const createTripEvent = (tripEvent, tripOffers) => {
   `);
 };
 
-const createTripEventsTemplate = (tripEvents, tripOffers) => {
-  const allEventsList = tripEvents.map((tripEvent) => createTripEvent(tripEvent, tripOffers));
-  const allEventsString = allEventsList.join('');
-
-  return (`
-    <ul class="trip-events__list">
-      ${allEventsString}
-    </ul>
-  `);
-};
-
-export default class TripEventsView extends AbstractView {
-  #tripEvents = null;
+export default class TripEventView extends AbstractView {
+  #tripEvent = null;
   #tripOffers = null;
 
-  constructor(tripEvents, tripOffers) {
+  constructor(tripEvent, tripOffers) {
     super();
-    this.#tripEvents = tripEvents;
+    this.#tripEvent = tripEvent;
     this.#tripOffers = tripOffers;
   }
 
   get template() {
-    return createTripEventsTemplate(this.#tripEvents, this.#tripOffers);
+    return createTripEventTemplate(this.#tripEvent, this.#tripOffers);
   }
 }

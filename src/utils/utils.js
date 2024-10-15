@@ -8,3 +8,5 @@ export const createHumanizedMonthDayDate = (date) => {
 
   return `${humanizedMonth} ${dayNumber}`;
 };
+
+export const addZeroBeforeNumber = (number) => `0${number}`.slice(-2);
