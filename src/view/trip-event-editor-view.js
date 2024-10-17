@@ -169,36 +169,38 @@ const createTripEventTime = (tripEvent) => {
 };
 
 const createTripEventEditorTemplate = (tripEvent, tripOffers) => (`
-  <form class="event event--edit" action="#" method="post">
-    <header class="event__header">
+  <li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
+      <header class="event__header">
 
-      ${createTripEventTypeCheckbox(tripEvent)}
+        ${createTripEventTypeCheckbox(tripEvent)}
 
-      ${createTripEventDestinationList(tripEvent)}
+        ${createTripEventDestinationList(tripEvent)}
 
-      ${createTripEventTime(tripEvent)}
+        ${createTripEventTime(tripEvent)}
 
-      <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-1">
-          <span class="visually-hidden">Price</span>
-          €
-        </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripEvent.base_price}">
-      </div>
+        <div class="event__field-group  event__field-group--price">
+          <label class="event__label" for="event-price-1">
+            <span class="visually-hidden">Price</span>
+            €
+          </label>
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripEvent.base_price}">
+        </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
-        <span class="visually-hidden">Open event</span>
-      </button>
-    </header>
+        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
+      </header>
 
-    <section class="event__details">
-      ${createTripEventOffers(tripEvent, tripOffers)}
+      <section class="event__details">
+        ${createTripEventOffers(tripEvent, tripOffers)}
 
-      ${createDestinationContainer(tripEvent)}
-    </section>
-  </form>
+        ${createDestinationContainer(tripEvent)}
+      </section>
+    </form>
+  </li>
 `);
 
 export default class TripEventEditorView extends AbstractView {
@@ -210,6 +212,36 @@ export default class TripEventEditorView extends AbstractView {
     this.#tripEvent = tripEvent;
     this.#tripOffers = tripOffers;
   }
+
+  setCloseEditorClickHandler = (callback) => {
+    this._callback.closeEditor = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditorHandler);
+  };
+
+  #closeEditorHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeEditor();
+  };
+
+  setSaveButtonClickHandler = (callback) => {
+    this._callback.saveButtonClick = callback;
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#saveButtonClickHandler);
+  };
+
+  #saveButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.saveButtonClick();
+  };
+
+  setDeleteButtonClickHandler = (callback) => {
+    this._callback.deleteButtonClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteButtonClick();
+  };
 
   get template() {
     return createTripEventEditorTemplate(this.#tripEvent, this.#tripOffers);

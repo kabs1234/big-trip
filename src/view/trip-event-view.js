@@ -115,6 +115,26 @@ export default class TripEventView extends AbstractView {
     this.#tripOffers = tripOffers;
   }
 
+  setEditEventClickHandler = (callback) => {
+    this._callback.editEventClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editEventHandler);
+  };
+
+  #editEventHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editEventClick();
+  };
+
+  setFavoriteButtonClickHandler = (callback) => {
+    this._callback.favoriteButtonClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteButtonClickHandler);
+  };
+
+  #favoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteButtonClick();
+  };
+
   get template() {
     return createTripEventTemplate(this.#tripEvent, this.#tripOffers);
   }

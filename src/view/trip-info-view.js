@@ -1,4 +1,3 @@
-import AbstractView from '../framework/view/abstract-view.js';
 import { createHumanizedMonthDayDate } from '../utils/utils.js';
 
 const createTripCost = (tripEvents, tripOffers) => {
@@ -54,24 +53,10 @@ const createTripTitleAndDate = (tripEvents) => (`
     ${createTripDates(tripEvents)}
   </div>
 `);
-const createTripInfoTemplate = (tripEvents, tripOffers) => (`
+
+export const createTripInfo = (tripEvents, tripOffers) => (`
   <section class="trip-main__trip-info  trip-info">
     ${createTripTitleAndDate(tripEvents)}
     ${createTripCost(tripEvents, tripOffers)}
   </section>
 `);
-
-export default class TripInfoView extends AbstractView {
-  #tripEvents = null;
-  #tripOffers = null;
-
-  constructor(tripEvents, tripOffers) {
-    super();
-    this.#tripEvents = tripEvents;
-    this.#tripOffers = tripOffers;
-  }
-
-  get template() {
-    return createTripInfoTemplate(this.#tripEvents, this.#tripOffers);
-  }
-}
