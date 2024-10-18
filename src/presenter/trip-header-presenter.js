@@ -3,7 +3,7 @@ import TripHeaderView from '../view/trip-header-view.js';
 
 export default class TripHeaderPresenter {
   #container = null;
-  #tripMainView = null;
+  #tripHeaderView = null;
   #tripEventsData = null;
   #tripOffersData = null;
 
@@ -11,29 +11,29 @@ export default class TripHeaderPresenter {
     this.#tripEventsData = tripEventsData;
     this.#tripOffersData = tripOffersData;
     this.#container = container;
-    this.#tripMainView = new TripHeaderView(this.#tripEventsData, this.#tripOffersData);
+    this.#tripHeaderView = new TripHeaderView(this.#tripEventsData, this.#tripOffersData);
   }
 
   #setEventListeners = () => {
-    this.#tripMainView.setFilterByAllClickHandler(() => {
+    this.#tripHeaderView.setFilterByAllClickHandler(() => {
       console.log('hi');
     });
 
-    this.#tripMainView.setFilterByPastClickHandler(() => {
+    this.#tripHeaderView.setFilterByPastClickHandler(() => {
       console.log('hi');
     });
 
-    this.#tripMainView.setFilterByFutureClickHandler(() => {
+    this.#tripHeaderView.setFilterByFutureClickHandler(() => {
       console.log('hi');
     });
   };
 
   addEventToNewEventButton = (callback) => {
-    this.#tripMainView.setAddEventButtonClickHandler(callback);
+    this.#tripHeaderView.setAddEventButtonClickHandler(callback);
   };
 
   initalize() {
-    render(this.#tripMainView , this.#container);
+    render(this.#tripHeaderView , this.#container);
     this.#setEventListeners();
   }
 }

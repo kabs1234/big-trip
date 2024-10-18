@@ -2,51 +2,88 @@ import { remove, render, replace } from '../framework/render.js';
 import TripEventEditorView from '../view/trip-event-editor-view.js';
 import TripEventView from '../view/trip-event-view.js';
 
+const MODE = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class TripEventPresenter {
   #tripEventsContainer = null;
   #tripEventEditorView = null;
   #tripEventView = null;
+  #changeData = null;
+  #changeMode = null;
+  #mode = MODE.DEFAULT;
+  #tripEvent = null;
 
-  constructor(tripEventsContainer) {
+  constructor(tripEventsContainer, changeData, changeMode) {
     this.#tripEventsContainer = tripEventsContainer;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
   }
 
-  renderTripEvent = (tripEvent, tripOffers) => {
+  initalize = (tripEvent, tripOffers) => {
+    this.#tripEvent = tripEvent;
+
     const previousTripEventView = this.#tripEventView;
+    const previousTripEventEditorView = this.#tripEventEditorView;
 
     this.#tripEventView = new TripEventView(tripEvent, tripOffers);
+    this.#tripEventEditorView = new TripEventEditorView(tripEvent, tripOffers);
 
-    this.#tripEventView.setEditEventClickHandler(() => {
-      this.renderTripEventEditor(tripEvent, tripOffers, this.#tripEventView);
-    });
+    this.#tripEventView.setEditEventClickHandler(this.openTripEventEditor);
+    this.#tripEventView.setFavoriteButtonClickHandler(this.changeTripEventToFavorite);
+    this.#tripEventEditorView.setCloseEditorClickHandler(this.closeTripEventEditor);
+    this.#tripEventEditorView.setDeleteButtonClickHandler(this.deleteTripEvent);
 
-    this.#tripEventView.setFavoriteButtonClickHandler(() => {
-      console.log('hi');
-    });
-
-    if (previousTripEventView === null) {
+    if (previousTripEventView === null && previousTripEventEditorView === null) {
       render(this.#tripEventView, this.#tripEventsContainer.element);
       return;
     }
 
-    if (this.#tripEventsContainer.contains(previousTripEventView.element)) {
+    if (this.#mode === MODE.DEFAULT) {
       replace(this.#tripEventView, previousTripEventView);
     }
 
+    if (this.#mode === MODE.EDITING) {
+      replace(this.#tripEventEditorView, previousTripEventEditorView);
+    }
+
     remove(previousTripEventView);
+    remove(previousTripEventEditorView);
   };
 
-  renderTripEventEditor = (tripEvent, tripOffers, element) => {
-    this.#tripEventEditorView = new TripEventEditorView(tripEvent, tripOffers);
-    replace(this.#tripEventEditorView, element);
+  openTripEventEditor = () => {
+    replace(this.#tripEventEditorView, this.#tripEventView);
+    document.addEventListener('keydown', this.onEscKeyDown);
+    this.#changeMode();
+    this.#mode = MODE.EDITING;
+  };
 
-    this.#tripEventEditorView.setCloseEditorClickHandler(() => {
-      replace(element, this.#tripEventEditorView);
-    });
+  closeTripEventEditor = () => {
+    replace(this.#tripEventView, this.#tripEventEditorView);
+    document.removeEventListener('keydown', this.onEscKeyDown);
+    this.#mode = MODE.DEFAULT;
+  };
 
-    this.#tripEventEditorView.setDeleteButtonClickHandler(() => {
-      remove(this.#tripEventEditorView);
-    });
+  resetView = () => {
+    if (this.#mode !== MODE.DEFAULT) {
+      this.closeTripEventEditor();
+    }
+  };
+
+  changeTripEventToFavorite = () => {
+    this.#changeData({...this.#tripEvent, is_favorite: !this.#tripEvent.is_favorite});
+  };
+
+  deleteTripEvent = () => {
+    remove(this.#tripEventEditorView);
+  };
+
+  onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape') {
+      this.closeTripEventEditor();
+    }
   };
 
   destroy = () => {
