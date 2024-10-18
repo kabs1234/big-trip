@@ -4,12 +4,12 @@ import TripEventSortsView from '../view/trip-event-sorts-view.js';
 import TripEventView from '../view/trip-event-view.js';
 import TripEventsContainerView from '../view/trip-events-container-view.js';
 import TripNewEventView from '../view/trip-new-event-view.js';
+import TripEventPresenter from './trip-event-presenter.js';
 
 export default class TripEventsPresenter {
   #tripEventSortsView = new TripEventSortsView();
   #tripEventsContainerView = new TripEventsContainerView();
   #tripEventsMap = new Map();
-  #tripEventEditorView = null;
   #container = null;
   #tripEventsData = null;
   #tripOffersData = null;
@@ -24,21 +24,9 @@ export default class TripEventsPresenter {
     render(this.#tripEventsContainerView, this.#container);
 
     tripEvents.map((tripEvent) => {
-      this.#renderTripEvent(tripEvent, tripOffers);
-    });
-  };
-
-  #renderTripEvent = (tripEvent, tripOffers) => {
-    const tripEventView = new TripEventView(tripEvent, tripOffers);
-    this.#tripEventsMap.set(tripEvent, tripEventView);
-    render(tripEventView, this.#tripEventsContainerView.element);
-
-    tripEventView.setEditEventClickHandler(() => {
-      this.#renderTripEventEditor(tripEvent, tripOffers, tripEventView);
-    });
-
-    tripEventView.setFavoriteButtonClickHandler(() => {
-      console.log('hi');
+      const tripEventPresenter = new TripEventPresenter(this.#tripEventsContainerView);
+      this.#tripEventsMap.set(tripEvent, tripEventPresenter);
+      tripEventPresenter.renderTripEvent(tripEvent, tripOffers);
     });
   };
 
@@ -69,54 +57,23 @@ export default class TripEventsPresenter {
 
   #setSortingsHandlers = () => {
     this.#tripEventSortsView.setSortByDayClickHandler(() => {
-      this.#rerenderTripEvents(this.#tripEventsMap, this.#tripOffersData);
+      console.log('hi');
     });
 
     this.#tripEventSortsView.setSortByTimeClickHandler(() => {
-      const tripEventsSortedByTime = this.sortEventsByTime(new Map(this.#tripEventsMap));
-
-      this.#rerenderTripEvents(tripEventsSortedByTime, this.#tripOffersData);
+      console.log('hi');
+      // const tripEventsSortedByTime = this.sortEventsByTime(new Map(this.#tripEventsMap));
     });
 
     this.#tripEventSortsView.setSortByPriceClickHandler(() => {
-      const tripEventsSortedByTime = this.sortEventsByPrice(new Map(this.#tripEventsMap));
-
-      this.#rerenderTripEvents(tripEventsSortedByTime, this.#tripOffersData);
-    });
-  };
-
-  #renderTripEventEditor = (tripEvent, tripOffers, element) => {
-    this.#tripEventEditorView = new TripEventEditorView(tripEvent, tripOffers);
-    replace(this.#tripEventEditorView, element);
-    console.log();
-
-    this.#tripEventEditorView.setCloseEditorClickHandler(() => {
-      replace(element, this.#tripEventEditorView);
-    });
-
-    this.#tripEventEditorView.setDeleteButtonClickHandler(() => {
-      this.#tripEventsMap.delete(tripEvent);
-      remove(this.#tripEventEditorView);
-    });
-  };
-
-  #rerenderTripEvents = (tripEventsMap, tripOffers) => {
-    remove(this.#tripEventsContainerView);
-    this.#tripEventsContainerView = new TripEventsContainerView();
-    render(this.#tripEventsContainerView, this.#container);
-    tripEventsMap.forEach((value, key) => this.#rerenderTripEvent(key, value, tripOffers));
-  };
-
-  #rerenderTripEvent = (tripEvent, tripEventView, tripOffers) => {
-    render(tripEventView, this.#tripEventsContainerView.element);
-
-    tripEventView.setEditEventClickHandler(() => {
-      this.#renderTripEventEditor(tripEvent, tripOffers, tripEventView);
-    });
-
-    tripEventView.setFavoriteButtonClickHandler(() => {
       console.log('hi');
+      // const tripEventsSortedByTime = this.sortEventsByPrice(new Map(this.#tripEventsMap));
     });
+  };
+
+  clearTripEventsList = () => {
+    this.#tripEventsMap.forEach((presenter) => presenter.destroy());
+    this.#tripEventsMap.clear();
   };
 
   renderTripNewEvent = () => {
@@ -127,7 +84,7 @@ export default class TripEventsPresenter {
 
   initalize = () => {
     render(this.#tripEventSortsView, this.#container);
-    this.#renderTripEvents(this.#tripEventsData, this.#tripOffersData);
     this.#setSortingsHandlers();
+    this.#renderTripEvents(this.#tripEventsData, this.#tripOffersData);
   };
 }

@@ -1,39 +1,16 @@
-import { render} from '../framework/render.js';
-import TripMainView from '../view/trip-main-view.js';
-
 export default class TripMainPresenter {
-  #container = null;
-  #tripMainView = null;
-  #tripEventsData = null;
-  #tripOffersData = null;
+  #tripHeaderPresenter = null;
+  #tripEventPresenter = null;
 
-  constructor(tripEventsData, tripOffersData, container) {
-    this.#tripEventsData = tripEventsData;
-    this.#tripOffersData = tripOffersData;
-    this.#container = container;
-    this.#tripMainView = new TripMainView(this.#tripEventsData, this.#tripOffersData);
+  constructor(tripHeaderPresenter, tripEventPresenter) {
+    this.#tripHeaderPresenter = tripHeaderPresenter;
+    this.#tripEventPresenter = tripEventPresenter;
   }
 
-  #setEventListeners = () => {
-    this.#tripMainView.setFilterByAllClickHandler(() => {
-      console.log('hi');
-    });
+  initalize = () => {
+    this.#tripHeaderPresenter.initalize();
+    this.#tripEventPresenter.initalize();
 
-    this.#tripMainView.setFilterByPastClickHandler(() => {
-      console.log('hi');
-    });
-
-    this.#tripMainView.setFilterByFutureClickHandler(() => {
-      console.log('hi');
-    });
+    this.#tripHeaderPresenter.addEventToNewEventButton(this.#tripEventPresenter.renderTripNewEvent);
   };
-
-  addEventToNewEventButton = (callback) => {
-    this.#tripMainView.setAddEventButtonClickHandler(callback);
-  };
-
-  initalize() {
-    render(this.#tripMainView , this.#container);
-    this.#setEventListeners();
-  }
 }

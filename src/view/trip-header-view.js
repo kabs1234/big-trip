@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createTripInfo } from './trip-info-view.js';
 
-const createFilters = () => (`
+const createTripFilters = () => (`
   <div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
@@ -27,17 +27,17 @@ const createFilters = () => (`
   </div>
 `);
 
-const createTripMainTemplate = (tripEvents, tripOffers) => (`
+const createTripHeaderTemplate = (tripEvents, tripOffers) => (`
   <div class="trip-main">
     ${createTripInfo(tripEvents, tripOffers)}
 
-    ${createFilters()}
+    ${createTripFilters()}
 
     <button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">New event</button>
   </div>
 `);
 
-export default class TripMainView extends AbstractView {
+export default class TripHeaderView extends AbstractView {
   #tripEvents = null;
   #tripOffers = null;
 
@@ -88,6 +88,6 @@ export default class TripMainView extends AbstractView {
   };
 
   get template() {
-    return createTripMainTemplate(this.#tripEvents, this.#tripOffers);
+    return createTripHeaderTemplate(this.#tripEvents, this.#tripOffers);
   }
 }
