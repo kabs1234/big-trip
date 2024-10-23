@@ -1,11 +1,12 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import * as dayjs from 'dayjs';
 import { addZeroBeforeNumber, createHumanizedMonthDayDate } from '../utils/utils.js';
 
 const createTimeDifference = (startDate, endDate) => {
   const ONE_HOUR_IN_MILLISECONDS = 3.6e6;
   const ONE_DAY_IN_MILLISECONDS = 8.64e7;
 
-  const timeDifference = new Date(endDate) - new Date(startDate);
+  const timeDifference = dayjs(endDate).diff(dayjs(startDate));
 
   if (timeDifference <= ONE_HOUR_IN_MILLISECONDS) {
     const minutes = timeDifference / (60 * 1000);
@@ -62,28 +63,28 @@ const createTripEventOffers = (tripEvent, tripOffers) => {
 };
 
 const createTripEventTemplate = (tripEvent, tripOffers) => {
-  const startDate = tripEvent.date_from;
-  const yearMonthDayFromStart = startDate.slice(0, 10);
-  const startFullDate = startDate.slice(0, 16);
-  const startDateHoursMinutes = startDate.slice(11, 16);
+  const startDate = dayjs(tripEvent.date_from);
+  const eventStartDate = `${startDate.format('YYYY-MM-DD')}`;
+  const isoStartDate = `${startDate.format('YYYY-MM-DDTHH:mm')}`;
+  const hoursAndMinutesStartDate = `${startDate.format('HH:mm')}`;
 
-  const endDate = tripEvent.date_to;
-  const endFullDate = endDate.slice(0, 16);
-  const endDateHoursMinutes = endDate.slice(11, 16);
+  const endDate = dayjs(tripEvent.date_to);
+  const isoEndDate = `${endDate.format('YYYY-MM-DDTHH:mm')}`;
+  const hoursAndMinutesEndDate = `${endDate.format('HH:mm')}`;
 
   return (`
     <li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${yearMonthDayFromStart}">${createHumanizedMonthDayDate(startDate)}</time>
+        <time class="event__date" datetime="${eventStartDate}">${createHumanizedMonthDayDate(startDate)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${tripEvent.type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${tripEvent.type} ${tripEvent.destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${startFullDate}">${startDateHoursMinutes}</time>
+            <time class="event__start-time" datetime="${isoStartDate}">${hoursAndMinutesStartDate}</time>
             —
-            <time class="event__end-time" datetime="${endFullDate}">${endDateHoursMinutes}</time>
+            <time class="event__end-time" datetime="${isoEndDate}">${hoursAndMinutesEndDate}</time>
           </p>
           <p class="event__duration">${createTimeDifference(startDate, endDate)}</p>
         </div>

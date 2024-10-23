@@ -15,6 +15,8 @@ export default class TripEventPresenter {
   #changeMode = null;
   #mode = MODE.DEFAULT;
   #tripEvent = null;
+  #tripOffers = null;
+  #tripDestinations = null;
 
   constructor(tripEventsContainer, changeData, changeMode) {
     this.#tripEventsContainer = tripEventsContainer;
@@ -22,19 +24,17 @@ export default class TripEventPresenter {
     this.#changeMode = changeMode;
   }
 
-  initalize = (tripEvent, tripOffers) => {
+  initalize = (tripEvent, tripOffers, tripDestinations) => {
     this.#tripEvent = tripEvent;
+    this.#tripOffers = tripOffers;
+    this.#tripDestinations = tripDestinations;
 
     const previousTripEventView = this.#tripEventView;
     const previousTripEventEditorView = this.#tripEventEditorView;
 
-    this.#tripEventView = new TripEventView(tripEvent, tripOffers);
-    this.#tripEventEditorView = new TripEventEditorView(tripEvent, tripOffers);
-
-    this.#tripEventView.setEditEventClickHandler(this.openTripEventEditor);
-    this.#tripEventView.setFavoriteButtonClickHandler(this.changeTripEventToFavorite);
-    this.#tripEventEditorView.setCloseEditorClickHandler(this.closeTripEventEditor);
-    this.#tripEventEditorView.setDeleteButtonClickHandler(this.deleteTripEvent);
+    this.#tripEventView = new TripEventView(this.#tripEvent, this.#tripOffers);
+    this.setupTripEventEditor();
+    this.setHandlersToTripEvent();
 
     if (previousTripEventView === null && previousTripEventEditorView === null) {
       render(this.#tripEventView, this.#tripEventsContainer.element);
@@ -62,8 +62,23 @@ export default class TripEventPresenter {
 
   closeTripEventEditor = () => {
     replace(this.#tripEventView, this.#tripEventEditorView);
+    this.setupTripEventEditor();
+
+    this.#tripEventEditorView.reset(this.#tripEvent);
     document.removeEventListener('keydown', this.onEscKeyDown);
     this.#mode = MODE.DEFAULT;
+  };
+
+  setHandlersToTripEvent = () => {
+    this.#tripEventView.setEditEventClickHandler(this.openTripEventEditor);
+    this.#tripEventView.setFavoriteButtonClickHandler(this.changeTripEventToFavorite);
+  };
+
+  setupTripEventEditor = () => {
+    this.#tripEventEditorView = new TripEventEditorView(this.#tripEvent, this.#tripOffers, this.#tripDestinations);
+    this.#tripEventEditorView.setCloseEditorClickHandler(this.closeTripEventEditor);
+    this.#tripEventEditorView.setDeleteButtonClickHandler(this.deleteTripEvent);
+    this.#tripEventEditorView.setFormSubmitHandler(this.submitTripEvent);
   };
 
   resetView = () => {
@@ -78,6 +93,16 @@ export default class TripEventPresenter {
 
   deleteTripEvent = () => {
     remove(this.#tripEventEditorView);
+  };
+
+  submitTripEvent = (updatedTripEvent) => {
+    this.#tripEvent = updatedTripEvent;
+    const updatedTripEventView = new TripEventView(this.#tripEvent, this.#tripOffers);
+    replace(updatedTripEventView, this.#tripEventEditorView);
+    this.#tripEventView = updatedTripEventView;
+    this.setHandlersToTripEvent();
+    this.setupTripEventEditor();
+    this.#mode = MODE.DEFAULT;
   };
 
   onEscKeyDown = (evt) => {

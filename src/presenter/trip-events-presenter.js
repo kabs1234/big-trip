@@ -1,11 +1,15 @@
-import { render, RenderPosition, replace, remove } from '../framework/render.js';
-import TripEventEditorView from '../view/trip-event-editor-view.js';
+import { render, RenderPosition } from '../framework/render.js';
 import { updateTripEvent } from '../utils/utils.js';
 import TripEventSortsView from '../view/trip-event-sorts-view.js';
-import TripEventView from '../view/trip-event-view.js';
 import TripEventsContainerView from '../view/trip-events-container-view.js';
 import TripNewEventView from '../view/trip-new-event-view.js';
 import TripEventPresenter from './trip-event-presenter.js';
+
+const SORT_TYPE = {
+  DAY: 'DAY',
+  TIME: 'TIME',
+  PRICE: 'PRICE',
+};
 
 export default class TripEventsPresenter {
   #tripEventSortsView = new TripEventSortsView();
@@ -14,61 +18,88 @@ export default class TripEventsPresenter {
   #container = null;
   #tripEventsData = null;
   #tripOffersData = null;
+  #tripDestinationsData = null;
   #tripEventsDataCopy = null;
+  #sortType = SORT_TYPE.DAY;
 
-  constructor(tripEventsData, tripOffersData, container) {
+  constructor(tripEventsData, tripOffersData, tripDestinationsData, container) {
     this.#tripEventsData = [...tripEventsData];
     this.#tripOffersData = tripOffersData;
+    this.#tripDestinationsData = tripDestinationsData;
     this.#container = container;
   }
 
-  #renderTripEvents = (tripEvents, tripOffers) => {
+  #renderTripEvents = (tripEvents) => {
     render(this.#tripEventsContainerView, this.#container);
 
     tripEvents.map((tripEvent) => {
       const tripEventPresenter = new TripEventPresenter(this.#tripEventsContainerView, this.handleTripEventChange, this.handleTripEventModeChange);
       this.#tripEventsMap.set(tripEvent.id, tripEventPresenter);
-      tripEventPresenter.initalize(tripEvent, tripOffers);
+      tripEventPresenter.initalize(tripEvent, this.#tripOffersData, this.#tripDestinationsData);
     });
   };
 
   sortEventsByTime = (tripEvents) => {
-    const sortedTripEvents = tripEvents.sort((a, b) => {
+    const sortedTripEventsByTime = tripEvents.sort((a, b) => {
       const durationA = new Date(a.date_to) - new Date(a.date_from);
       const durationB = new Date(b.date_to) - new Date(b.date_from);
 
       return durationB - durationA;
     });
 
-    return sortedTripEvents;
+    return sortedTripEventsByTime;
   };
 
   sortEventsByPrice = (tripEvents) => {
-    const sortedEntries = tripEvents.sort((a, b) => b.base_price - a.base_price);
+    const sortedTripEventsByPrice = tripEvents.sort((a, b) => b.base_price - a.base_price);
 
-    return sortedEntries;
+    return sortedTripEventsByPrice;
+  };
+
+  sortEventsByDay = (tripEvents) => {
+    const sortedTripEventsByDay = tripEvents.sort((a, b) => new Date(a.date_from) - new Date(b.date_from));
+
+    return sortedTripEventsByDay;
   };
 
   #setSortingsHandlers = () => {
-    this.#tripEventsDataCopy = [...this.#tripEventsData];
-
     this.#tripEventSortsView.setSortByDayClickHandler(() => {
-      this.clearTripEventsList();
-      this.#tripEventsDataCopy = [...this.#tripEventsData];
-      this.#renderTripEvents(this.#tripEventsDataCopy, this.#tripOffersData);
+      this.renderSortedTripEvents(SORT_TYPE.DAY);
     });
 
     this.#tripEventSortsView.setSortByTimeClickHandler(() => {
-      this.clearTripEventsList();
-      this.sortEventsByTime(this.#tripEventsDataCopy);
-      this.#renderTripEvents(this.#tripEventsDataCopy, this.#tripOffersData);
+      this.renderSortedTripEvents(SORT_TYPE.TIME);
     });
 
     this.#tripEventSortsView.setSortByPriceClickHandler(() => {
-      this.clearTripEventsList();
-      this.sortEventsByPrice(this.#tripEventsDataCopy);
-      this.#renderTripEvents(this.#tripEventsDataCopy, this.#tripOffersData);
+      this.renderSortedTripEvents(SORT_TYPE.PRICE);
     });
+  };
+
+  renderSortedTripEvents = (sortType) => {
+    if (sortType === this.#sortType) {
+      return;
+    }
+
+    this.#tripEventsDataCopy = [...this.#tripEventsData];
+
+    switch (sortType) {
+      case SORT_TYPE.DAY:
+        this.sortEventsByDay(this.#tripEventsDataCopy);
+        this.#sortType = SORT_TYPE.DAY;
+        break;
+      case SORT_TYPE.TIME:
+        this.sortEventsByTime(this.#tripEventsDataCopy);
+        this.#sortType = SORT_TYPE.TIME;
+        break;
+      case SORT_TYPE.PRICE:
+        this.sortEventsByPrice(this.#tripEventsDataCopy);
+        this.#sortType = SORT_TYPE.PRICE;
+        break;
+    }
+
+    this.clearTripEventsList();
+    this.#renderTripEvents(this.#tripEventsDataCopy);
   };
 
   clearTripEventsList = () => {
@@ -78,7 +109,7 @@ export default class TripEventsPresenter {
 
   handleTripEventChange = (updatedTripEvent) => {
     updateTripEvent(this.#tripEventsData, updatedTripEvent);
-    this.#tripEventsMap.get(updatedTripEvent.id).initalize(updatedTripEvent, this.#tripOffersData);
+    this.#tripEventsMap.get(updatedTripEvent.id).initalize(updatedTripEvent, this.#tripOffersData, this.#tripDestinationsData);
   };
 
   handleTripEventModeChange = () => {
@@ -94,6 +125,7 @@ export default class TripEventsPresenter {
   initalize = () => {
     render(this.#tripEventSortsView, this.#container);
     this.#setSortingsHandlers();
-    this.#renderTripEvents(this.#tripEventsData, this.#tripOffersData);
+    this.#tripEventsDataCopy = this.sortEventsByDay([...this.#tripEventsData]);
+    this.#renderTripEvents(this.#tripEventsDataCopy);
   };
 }
