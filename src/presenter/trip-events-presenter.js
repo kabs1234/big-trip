@@ -1,14 +1,9 @@
+import { SORT_TYPE } from '../constants.js';
 import { render, RenderPosition } from '../framework/render.js';
 import TripEventSortsView from '../view/trip-event-sorts-view.js';
 import TripEventsContainerView from '../view/trip-events-container-view.js';
 import TripNewEventView from '../view/trip-new-event-view.js';
 import TripEventPresenter from './trip-event-presenter.js';
-
-const SORT_TYPE = {
-  DAY: 'DAY',
-  TIME: 'TIME',
-  PRICE: 'PRICE',
-};
 
 export default class TripEventsPresenter {
   #tripEventSortsView = new TripEventSortsView();

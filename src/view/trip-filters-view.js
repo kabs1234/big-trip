@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { createTripInfo } from './trip-info-view.js';
 
-const createTripFilters = () => (`
+const createTripFiltersTemplate = () => (`
   <div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
@@ -27,17 +26,7 @@ const createTripFilters = () => (`
   </div>
 `);
 
-const createTripHeaderTemplate = (tripEvents, tripOffers) => (`
-  <div class="trip-main">
-    ${createTripInfo(tripEvents, tripOffers)}
-
-    ${createTripFilters()}
-
-    <button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">New event</button>
-  </div>
-`);
-
-export default class TripHeaderView extends AbstractView {
+export default class TripFiltersView extends AbstractView {
   #tripEvents = null;
   #tripOffers = null;
 
@@ -77,17 +66,7 @@ export default class TripHeaderView extends AbstractView {
     this._callback.filterByFutureClick();
   };
 
-  setAddEventButtonClickHandler = (callback) => {
-    this._callback.addEventButtonClick = callback;
-    this.element.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addEventButtonClickHandler);
-  };
-
-  #addEventButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.addEventButtonClick();
-  };
-
   get template() {
-    return createTripHeaderTemplate(this.#tripEvents, this.#tripOffers);
+    return createTripFiltersTemplate(this.#tripEvents, this.#tripOffers);
   }
 }

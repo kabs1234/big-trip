@@ -1,9 +1,9 @@
 import { render} from '../framework/render.js';
-import TripHeaderView from '../view/trip-header-view.js';
+import TripFiltersView from '../view/trip-filters-view.js';
 
-export default class TripHeaderPresenter {
+export default class TripFiltersPresenter {
   #container = null;
-  #tripHeaderView = null;
+  #tripFiltersView = null;
   #tripEventsModel = null;
   #tripOffersModel = null;
 
@@ -21,31 +21,27 @@ export default class TripHeaderPresenter {
     return this.#tripOffersModel.tripOffers;
   }
 
-  #renderTripHeader = () => {
-    this.#tripHeaderView = new TripHeaderView(this.tripEvents, this.tripOffers);
-    render(this.#tripHeaderView , this.#container);
+  #renderTripFilters = () => {
+    this.#tripFiltersView = new TripFiltersView(this.tripEvents, this.tripOffers);
+    render(this.#tripFiltersView , this.#container);
   };
 
   #setEventListeners = () => {
-    this.#tripHeaderView.setFilterByAllClickHandler(() => {
+    this.#tripFiltersView.setFilterByAllClickHandler(() => {
       console.log('hi');
     });
 
-    this.#tripHeaderView.setFilterByPastClickHandler(() => {
+    this.#tripFiltersView.setFilterByPastClickHandler(() => {
       console.log('hi');
     });
 
-    this.#tripHeaderView.setFilterByFutureClickHandler(() => {
+    this.#tripFiltersView.setFilterByFutureClickHandler(() => {
       console.log('hi');
     });
-  };
-
-  addEventToNewEventButton = (callback) => {
-    this.#tripHeaderView.setAddEventButtonClickHandler(callback);
   };
 
   initalize() {
-    this.#renderTripHeader();
+    this.#renderTripFilters();
     this.#setEventListeners();
   }
 }
