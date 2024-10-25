@@ -4,15 +4,27 @@ import TripHeaderView from '../view/trip-header-view.js';
 export default class TripHeaderPresenter {
   #container = null;
   #tripHeaderView = null;
-  #tripEventsData = null;
-  #tripOffersData = null;
+  #tripEventsModel = null;
+  #tripOffersModel = null;
 
-  constructor(tripEventsData, tripOffersData, container) {
-    this.#tripEventsData = tripEventsData;
-    this.#tripOffersData = tripOffersData;
+  constructor(tripEventsModel, tripOffersModel, container) {
+    this.#tripEventsModel = tripEventsModel;
+    this.#tripOffersModel = tripOffersModel;
     this.#container = container;
-    this.#tripHeaderView = new TripHeaderView(this.#tripEventsData, this.#tripOffersData);
   }
+
+  get tripEvents() {
+    return this.#tripEventsModel.tripEvents;
+  }
+
+  get tripOffers() {
+    return this.#tripOffersModel.tripOffers;
+  }
+
+  #renderTripHeader = () => {
+    this.#tripHeaderView = new TripHeaderView(this.tripEvents, this.tripOffers);
+    render(this.#tripHeaderView , this.#container);
+  };
 
   #setEventListeners = () => {
     this.#tripHeaderView.setFilterByAllClickHandler(() => {
@@ -33,7 +45,7 @@ export default class TripHeaderPresenter {
   };
 
   initalize() {
-    render(this.#tripHeaderView , this.#container);
+    this.#renderTripHeader();
     this.#setEventListeners();
   }
 }

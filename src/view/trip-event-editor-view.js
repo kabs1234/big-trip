@@ -202,7 +202,6 @@ const createTripEventEditorTemplate = (tripEvent, tripOffers, tripDestinations) 
 `);
 
 export default class TripEventEditorView extends AbstractStatefulView  {
-  #tripEvent = null;
   #tripOffers = null;
   #tripDestinations = null;
 

@@ -10,17 +10,3 @@ export const createHumanizedMonthDayDate = (date) => {
 };
 
 export const addZeroBeforeNumber = (number) => `0${number}`.slice(-2);
-
-export const updateTripEvent = (tripEvents, updatingTripEvent) => {
-  const changingTripEventIndex = tripEvents.findIndex((tripEvent) => tripEvent.id === updatingTripEvent.id);
-
-  if (changingTripEventIndex === -1) {
-    return;
-  }
-
-  return [
-    ...tripEvents.slice(0, changingTripEventIndex),
-    updatingTripEvent,
-    ...tripEvents.slice(changingTripEventIndex + 1),
-  ];
-};

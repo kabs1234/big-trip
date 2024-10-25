@@ -7,17 +7,19 @@ import TripOffersModel from './model/trip-offers-model.js';
 import TripDestinationsModel from './model/trip-destinations-model.js';
 import TripEventsPresenter from './presenter/trip-events-presenter.js';
 import TripHeaderPresenter from './presenter/trip-header-presenter.js';
-import TripMainPresenter from './presenter/trip-main-presenter.js';
+import TripHeaderContainerView from './view/trip-header-container.js';
 
 const tripMainContainer = document.querySelector('.page-body__container');
 const tripEventsContainer = document.querySelector('.trip-events');
+
+const tripHeaderContainer = new TripHeaderContainerView();
 
 const tripEventsModel = new TripEventsModel(TRIP_EVENTS);
 const tripOffersModel = new TripOffersModel(TRIP_OFFERS);
 const tripDestinationsModel = new TripDestinationsModel(TRIP_DESTINATIONS);
 
-const tripInfoPresenter = new TripHeaderPresenter(tripEventsModel.tripEvents, tripOffersModel.tripOffers, tripMainContainer);
-const tripEventsPresenter = new TripEventsPresenter(tripEventsModel.tripEvents, tripOffersModel.tripOffers, tripDestinationsModel.tripDestinations, tripEventsContainer);
-const tripPresenter = new TripMainPresenter(tripInfoPresenter, tripEventsPresenter);
+const tripInfoPresenter = new TripHeaderPresenter(tripEventsModel, tripOffersModel, tripMainContainer);
+const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripOffersModel, tripDestinationsModel, tripEventsContainer);
 
-tripPresenter.initalize();
+tripInfoPresenter.initalize();
+tripEventsPresenter.initalize();
