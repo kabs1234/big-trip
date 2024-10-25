@@ -156,10 +156,10 @@ const createTripEventTime = (tripEvent) => {
 
   return (`
     <div class="event__field-group  event__field-group--time">
-      <label class="visually-hidden" for="event-start-time-1">From</label>
+      <label class="visually-hidden event__label event__label--start-time" for="event-start-time-1">From</label>
       <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value='${fullFormattedStartDate}'>
       —
-      <label class="visually-hidden" for="event-end-time-1">To</label>
+      <label class="visually-hidden event__label event__label--end-time" for="event-end-time-1">To</label>
       <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value='${fullFormattedEndDate}'>
     </div>
   `);
@@ -248,7 +248,7 @@ export default class TripEventEditorView extends AbstractStatefulView  {
   #setEventPriceHandler = () => {
     const tripEventPriceInput = this.element.querySelector('.event__input--price');
 
-    tripEventPriceInput.addEventListener('focusout', this.eventPriceHandler);
+    tripEventPriceInput.addEventListener('change', this.eventPriceHandler);
   };
 
   #setEventOffersHandler = () => {
@@ -265,21 +265,38 @@ export default class TripEventEditorView extends AbstractStatefulView  {
     const tripEventStartTimeInput = this.element.querySelector('#event-start-time-1');
     const tripEventEndTimeInput = this.element.querySelector('#event-end-time-1');
 
-    flatpickr(tripEventStartTimeInput, {
-      dateFormat: 'd/m/y H:i',
-      enableTime: true,
-      time_24hr: true,
-      onClose: (selectedDates) => this.eventStartDateHandler(selectedDates[0].toISOString())
-      ,
+    tripEventStartTimeInput.addEventListener('click', () => {
+      const flatpickrStartTimeInstance = flatpickr(tripEventStartTimeInput, {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        time_24hr: true,
+        maxDate: tripEventEndTimeInput.value,
+        onChange: (selectedDates) => {
+          this.eventStartDateHandler(selectedDates[0].toISOString());
+        },
+        onClose: () => {
+          flatpickrStartTimeInstance.destroy();
+        }
+      });
+
+      flatpickrStartTimeInstance.open();
     });
 
-    flatpickr(tripEventEndTimeInput, {
-      dateFormat: 'd/m/y H:i',
-      enableTime: true,
-      time_24hr: true,
-      minDate: tripEventStartTimeInput.value,
-      onClose: (selectedDates) => this.eventEndDateHandler(selectedDates[0].toISOString())
-      ,
+    tripEventEndTimeInput.addEventListener('click', () => {
+      const flatpickrEndTimeInstance = flatpickr(tripEventEndTimeInput, {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        time_24hr: true,
+        minDate: tripEventStartTimeInput.value,
+        onChange: (selectedDates) => {
+          this.eventEndDateHandler(selectedDates[0].toISOString());
+        },
+        onClose: () => {
+          flatpickrEndTimeInstance.destroy();
+        }
+      });
+
+      flatpickrEndTimeInstance.open();
     });
   };
 
