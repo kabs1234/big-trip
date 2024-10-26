@@ -1,3 +1,4 @@
+import { USER_ACTION, UPDATE_TYPE } from '../constants.js';
 import { remove, render, replace } from '../framework/render.js';
 import TripEventEditorView from '../view/trip-event-editor-view.js';
 import TripEventView from '../view/trip-event-view.js';
@@ -88,10 +89,11 @@ export default class TripEventPresenter {
   };
 
   changeTripEventToFavorite = () => {
-    this.#changeData({...this.#tripEvent, is_favorite: !this.#tripEvent.is_favorite});
+    this.#changeData(USER_ACTION.UPDATE_TRIP, UPDATE_TYPE.PATCH, {...this.#tripEvent, is_favorite: !this.#tripEvent.is_favorite});
   };
 
   deleteTripEvent = () => {
+    this.#changeData(USER_ACTION.DELETE_TRIP, UPDATE_TYPE.MINOR, this.#tripEvent);
     remove(this.#tripEventEditorView);
   };
 
@@ -99,10 +101,12 @@ export default class TripEventPresenter {
     this.#tripEvent = updatedTripEvent;
     const updatedTripEventView = new TripEventView(this.#tripEvent, this.#tripOffers);
     replace(updatedTripEventView, this.#tripEventEditorView);
+
     this.#tripEventView = updatedTripEventView;
     this.setHandlersToTripEvent();
     this.setupTripEventEditor();
     this.#mode = MODE.DEFAULT;
+    this.#changeData(USER_ACTION.UPDATE_TRIP, UPDATE_TYPE.PATCH, this.#tripEvent);
   };
 
   onEscKeyDown = (evt) => {

@@ -16,8 +16,15 @@ const createTripCost = (tripEvents, tripOffers) => {
   `);
 };
 
+const sortEventsByDay = (tripEvents) => {
+  const sortedTripEventsByDay = tripEvents.sort((a, b) => new Date(a.date_from) - new Date(b.date_from));
+
+  return sortedTripEventsByDay;
+};
+
 const createTripTitle = (tripEvents) => {
-  const tripEventsDestinations = tripEvents.map((tripEvent) => tripEvent.destination.name);
+  const sortedEventsByDay = sortEventsByDay(tripEvents);
+  const tripEventsDestinations = sortedEventsByDay.map((tripEvent) => tripEvent.destination.name);
   const tripEventsSet = new Set(tripEventsDestinations);
 
   if (tripEventsSet.size > 3) {
@@ -28,12 +35,14 @@ const createTripTitle = (tripEvents) => {
 };
 
 const createTripDates = (tripEvents) => {
-  const startDate = tripEvents[0].date_from;
+  const sortedEventsByDay = sortEventsByDay(tripEvents);
+
+  const startDate = sortedEventsByDay[0].date_from;
   const convertedStartDate = new Date(startDate);
   const startDateMonth = convertedStartDate.getMonth();
   const humanizedStartDate = createHumanizedMonthDayDate(startDate);
 
-  const endDate = tripEvents.slice(-1)[0].date_to;
+  const endDate = sortedEventsByDay.slice(-1)[0].date_to;
   const convertedEndDate = new Date(endDate);
   const endDateMonth = convertedEndDate.getMonth();
   let humanizedEndDate;

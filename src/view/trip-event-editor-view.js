@@ -318,7 +318,6 @@ export default class TripEventEditorView extends AbstractStatefulView  {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    console.log(TripEventEditorView.parseStateToTripEvent(this._state));
     this._callback.formSubmit(TripEventEditorView.parseStateToTripEvent(this._state));
   };
 

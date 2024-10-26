@@ -12,15 +12,17 @@ export default class TripEventsModel extends Observable {
     return this.#tripEvents;
   }
 
-  set tripEvents(newTripEvent) {
+  addTripEvents(updateType, newTripEvent) {
     this.#tripEvents.push(newTripEvent);
+
+    this._notify(updateType, newTripEvent);
   }
 
-  updateTripEvents = (updatingTripEvent) => {
+  updateTripEvents = (updateType, updatingTripEvent) => {
     const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === updatingTripEvent.id);
 
     if (changingTripEventIndex === -1) {
-      return;
+      throw new Error('Can\'t update unexisting event');
     }
 
     this.#tripEvents = [
@@ -28,18 +30,23 @@ export default class TripEventsModel extends Observable {
       updatingTripEvent,
       ...this.tripEvents.slice(changingTripEventIndex + 1),
     ];
+
+    this._notify(updateType, updatingTripEvent);
   };
 
-  deleteTripEvents = (deletingTripEvent) => {
+  deleteTripEvents = (updateType, deletingTripEvent) => {
     const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === deletingTripEvent.id);
 
     if (changingTripEventIndex === -1) {
-      return;
+      throw new Error('Can\'t delete unexisting event');
     }
 
     this.#tripEvents = [
       ...this.tripEvents.slice(0, changingTripEventIndex),
       ...this.tripEvents.slice(changingTripEventIndex + 1),
     ];
+
+    this._notify(updateType);
+
   };
 }
