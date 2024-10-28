@@ -116,8 +116,9 @@ export default class TripEventsPresenter {
     const filteredEventsByFuture = tripEvents.filter((tripEvent) => {
       const currentDate = dayjs();
       const startDate = dayjs(tripEvent.date_from);
+      const endDate = dayjs(tripEvent.date_to);
 
-      return startDate.isAfter(currentDate);
+      return startDate.isAfter(currentDate) || (startDate.isBefore(currentDate) && endDate.isAfter(currentDate));
     });
 
     return filteredEventsByFuture;
@@ -126,9 +127,10 @@ export default class TripEventsPresenter {
   filterEventsByPast = (tripEvents) => {
     const filteredEventsByPast = tripEvents.filter((tripEvent) => {
       const currentDate = dayjs();
+      const startDate = dayjs(tripEvent.date_from);
       const endDate = dayjs(tripEvent.date_to);
 
-      return endDate.isBefore(currentDate);
+      return endDate.isBefore(currentDate) || (startDate.isBefore(currentDate) && endDate.isAfter(currentDate));
     });
 
     return filteredEventsByPast;
