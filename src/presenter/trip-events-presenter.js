@@ -5,33 +5,35 @@ import TripEventSortsView from '../view/trip-event-sorts-view.js';
 import TripEventsContainerView from '../view/trip-events-container-view.js';
 import TripNewEventView from '../view/trip-new-event-view.js';
 import TripEventPresenter from './trip-event-presenter.js';
+import TripEventsEmptyView from '../view/trip-events-empty-view.js';
 
 export default class TripEventsPresenter {
   #tripEventSortsView = null;
-  #tripEventsContainerView = new TripEventsContainerView();
+  #tripEventsEmptyView = null;
+  #tripEventsContainerView = null;
   #tripEventsMap = new Map();
   #container = null;
   #tripEventsModel = null;
   #tripOffersModel = null;
   #tripDestinationsModel = null;
-  #tripFiltersModel = null;
+  #tripsFilterModel = null;
   #sortType = SORT_TYPE.DAY;
 
-  constructor(tripEventsModel, tripOffersModel, tripDestinationsModel, tripFiltersModel, container) {
+  constructor(tripEventsModel, tripOffersModel, tripDestinationsModel, tripsFilterModel, container) {
     this.#tripEventsModel = tripEventsModel;
     this.#tripOffersModel = tripOffersModel;
     this.#tripDestinationsModel = tripDestinationsModel;
-    this.#tripFiltersModel = tripFiltersModel;
+    this.#tripsFilterModel = tripsFilterModel;
     this.#container = container;
 
     tripEventsModel.addObserver(this.handleTripModelChange);
-    tripFiltersModel.addObserver(this.handleTripModelChange);
+    tripsFilterModel.addObserver(this.handleTripModelChange);
   }
 
   get tripEvents() {
     let tripEventsCopy = [...this.#tripEventsModel.tripEvents];
 
-    switch (this.#tripFiltersModel.tripFilter) {
+    switch (this.tripsFilter) {
       case TRIPS_FILTER.FUTURE:
         tripEventsCopy = this.filterEventsByFuture(tripEventsCopy);
         break;
@@ -52,6 +54,10 @@ export default class TripEventsPresenter {
     return this.sortEventsByDay(tripEventsCopy);
   }
 
+  get tripsFilter() {
+    return this.#tripsFilterModel.tripFilter;
+  }
+
   get tripOffers() {
     return this.#tripOffersModel.tripOffers;
   }
@@ -60,8 +66,21 @@ export default class TripEventsPresenter {
     return this.#tripDestinationsModel.tripDestinations;
   }
 
+  #renderTripEventsContainer = () => {
+    const previousTripEventsContainer = this.#tripEventsContainerView;
+
+    this.#tripEventsContainerView = new TripEventsContainerView();
+    if (previousTripEventsContainer === null) {
+      render(this.#tripEventsContainerView, this.#container);
+      return;
+    }
+
+    replace(this.#tripEventsContainerView, previousTripEventsContainer);
+    remove(previousTripEventsContainer);
+  };
+
   #renderTripEvents = (tripEvents) => {
-    render(this.#tripEventsContainerView, this.#container);
+    this.#renderTripEventsContainer();
 
     tripEvents.map((tripEvent) => {
       const tripEventPresenter = new TripEventPresenter(this.#tripEventsContainerView, this.handleTripViewChange, this.handleTripEventModeChange);
@@ -165,9 +184,23 @@ export default class TripEventsPresenter {
         this.#tripEventsMap.get(changingTripEvent.id).initalize(changingTripEvent, this.tripOffers, this.tripDestinations);
         break;
       case UPDATE_TYPE.MINOR:
+        this.clearTripEventsList();
+        this.#renderTripEvents(this.tripEvents);
         break;
       case UPDATE_TYPE.MAJOR:
         this.clearTripEventsList();
+        this.#tripEventsContainerView = this.destroyView(this.#tripEventsContainerView);
+
+        if (this.tripEvents.length === 0) {
+          remove(this.#tripEventSortsView);
+          this.renderTripEventsEmptyMessage();
+          this.#tripEventSortsView = this.destroyView(this.#tripEventSortsView);
+          return;
+        }
+
+        this.#tripEventsEmptyView = this.destroyView(this.#tripEventsEmptyView);
+        this.#sortType = SORT_TYPE.DAY;
+        this.renderTripSortings(this.#sortType);
         this.#renderTripEvents(this.tripEvents);
         break;
     }
@@ -198,7 +231,31 @@ export default class TripEventsPresenter {
     remove(previousTripEventSortsView);
   };
 
+  renderTripEventsEmptyMessage = () => {
+    const previousTripEventsEmptyView = this.#tripEventsEmptyView;
+
+    this.#tripEventsEmptyView = new TripEventsEmptyView(this.tripsFilter);
+    if (previousTripEventsEmptyView === null) {
+      render(this.#tripEventsEmptyView, this.#container);
+      return;
+    }
+
+    replace(this.#tripEventsEmptyView, previousTripEventsEmptyView);
+    remove(previousTripEventsEmptyView);
+  };
+
+  destroyView = (view) => {
+    remove(view);
+    return null;
+  };
+
+
   initalize = () => {
+    if (this.tripEvents.length === 0) {
+      this.renderTripEventsEmptyMessage();
+      return;
+    }
+
     this.renderTripSortings(this.#sortType);
     this.#renderTripEvents(this.tripEvents);
   };

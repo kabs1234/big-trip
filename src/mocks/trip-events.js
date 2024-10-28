@@ -1,8 +1,8 @@
 export const TRIP_EVENTS = [{
   'id': '0',
   'type': 'sightseeing',
-  'date_from': '2024-11-10T12:00:00.000Z',
-  'date_to': '2024-11-10T12:45:00.000Z', // 45 minutes
+  'date_from': '2024-10-10T12:00:00.000Z',
+  'date_to': '2024-10-10T12:45:00.000Z', // 45 minutes
   'destination': {
     'name': 'Paris',
     'description': 'Paris, with a beautiful old town, for those who value comfort and coziness, full of of cozy canteens where you can try the best coffee in the Middle East, famous for its crowded street markets with the best street food in Asia.',
@@ -26,8 +26,8 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '1',
   'type': 'bus',
-  'date_from': '2024-11-11T08:00:00.000Z',
-  'date_to': '2024-11-11T15:30:00.000Z', // 7 hours 30 minutes
+  'date_from': '2024-10-11T08:00:00.000Z',
+  'date_to': '2024-10-11T15:30:00.000Z', // 7 hours 30 minutes
   'destination': {
     'name': 'Venice',
     'description': 'Venice, with crowded streets, in a middle of Europe, with a beautiful old town, for those who value comfort and coziness.',
@@ -51,8 +51,8 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '2',
   'type': 'bus',
-  'date_from': '2024-11-09T08:00:00.000Z',
-  'date_to': '2024-11-13T08:00:00.000Z', // 4 days
+  'date_from': '2024-10-09T08:00:00.000Z',
+  'date_to': '2024-10-13T08:00:00.000Z', // 4 days
   'destination': {
     'name': 'Rome',
     'description': 'Rome, in a middle of Europe, with a beautiful old town, middle-eastern paradise, for those who value comfort and coziness, with an embankment of a mighty river as a centre of attraction, full of of cozy canteens where you can try the best coffee in the Middle East.',
@@ -82,8 +82,8 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '3',
   'type': 'check-in',
-  'date_from': '2024-11-10T15:00:00.000Z',
-  'date_to': '2024-11-10T15:20:00.000Z', // 20 minutes
+  'date_from': '2024-10-10T15:00:00.000Z',
+  'date_to': '2024-10-10T15:20:00.000Z', // 20 minutes
   'destination': {
     'name': 'Venice',
     'description': 'Venice, is a beautiful city, a true asian pearl, famous for its crowded street markets with the best street food in Asia.',
@@ -119,8 +119,8 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '4',
   'type': 'flight',
-  'date_from': '2024-11-11T04:29:08.211Z',
-  'date_to': '2024-11-12T05:00:28.000Z',
+  'date_from': '2024-10-11T04:29:08.211Z',
+  'date_to': '2024-10-12T05:00:28.000Z',
   'destination': {
     'name': 'Madrid',
     'description': 'Madrid, in a middle of Europe, for those who value comfort and coziness, with an embankment of a mighty river as a centre of attraction.',
@@ -153,8 +153,8 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '5',
   'type': 'flight',
-  'date_from': '2024-11-11T17:41:28.000Z',
-  'date_to': '2024-11-12T10:56:36.350Z',
+  'date_from': '2024-10-11T17:41:28.000Z',
+  'date_to': '2024-10-12T10:56:36.350Z',
   'destination': {
     'name': 'Geneva',
     'description': 'Geneva, is a beautiful city, with crowded streets, middle-eastern paradise, with an embankment of a mighty river as a centre of attraction, full of of cozy canteens where you can try the best coffee in the Middle East, a perfect place to stay with a family.',
@@ -583,3 +583,5 @@ export const TRIP_EVENTS = [{
   'is_favorite': true,
   'offers': [5, 6]
 }];
+
+// export const TRIP_EVENTS = [];

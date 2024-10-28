@@ -42,6 +42,12 @@ export default class TripInfoPresenter {
   }
 
   #renderTripInfo = () => {
+    if (this.tripEvents.length === 0) {
+      // remove(this.#tripInfoView);
+      // this.#tripInfoView = null;
+      return;
+    }
+
     const previousTripInfoView = this.#tripInfoView;
 
     this.#tripInfoView = new TripInfoView(this.tripEvents, this.tripOffers);

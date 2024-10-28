@@ -1,22 +1,33 @@
+import { TRIPS_FILTER } from '../constants.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-const getEverythingFilterEmptyListMessage = () => ('<p class="trip-events__msg">Click New Event to create your first point</p>');
+const getEverythingListMessage = () => '<p class="trip-events__msg">Click New Event to create your first point</p>';
 
-const getPastFilterEmptyListMessage = () => ('There are no past events now');
+const getPastListMessage = () => '<p class="trip-events__msg">There are no past events now</p>';
 
-const getFutureFilterEmptyListMessage = () => ('There are no future events now');
+const getFutureListMessage = () => '<p class="trip-events__msg">There are no future events now</p>';
 
-const createTripEventsEmptyTemplate = (selectedFilter) => ('');
+const createTripEventsEmptyTemplate = (activeFilter) => {
+  switch (activeFilter) {
+    case TRIPS_FILTER.EVERYTHING:
+      return getEverythingListMessage();
+    case TRIPS_FILTER.PAST:
+      return getPastListMessage();
+    case TRIPS_FILTER.FUTURE:
+      return getFutureListMessage();
 
-class TripEventsEmptyView extends AbstractView {
-  #selectedFilter = null;
+  }
+};
 
-  constructor(selectedFilter) {
+export default class TripEventsEmptyView extends AbstractView {
+  #activeFilter = null;
+
+  constructor(activeFilter) {
     super();
-    this.#selectedFilter = selectedFilter;
+    this.#activeFilter = activeFilter;
   }
 
   get template() {
-    createTripEventsEmptyTemplate();
+    return createTripEventsEmptyTemplate(this.#activeFilter);
   }
 }
