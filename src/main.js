@@ -28,6 +28,17 @@ const tripAddEventButtonView = new TripAddEventButtonView();
 
 const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripOffersModel, tripDestinationsModel, tripFilterModel, tripEventsContainer);
 
+const handleAddEventFormClose = () => {
+  tripAddEventButtonView.element.disabled = false;
+};
+
+const handleAddEventButtonClick = () => {
+  tripAddEventButtonView.element.disabled = true;
+  tripEventsPresenter.createTripNewEvent(handleAddEventFormClose);
+};
+
+tripAddEventButtonView.setAddEventButtonClickHandler(handleAddEventButtonClick);
+
 render(tripHeaderContainer, tripMainContainer);
 tripInfoPresenter.initalize();
 tripFiltersPresenter.initalize();

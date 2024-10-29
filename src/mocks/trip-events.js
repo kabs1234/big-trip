@@ -51,7 +51,7 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '2',
   'type': 'bus',
-  'date_from': '2024-10-09T08:00:00.000Z',
+  'date_from': '2024-11-09T08:00:00.000Z',
   'date_to': '2024-11-13T08:00:00.000Z', // 4 days
   'destination': {
     'name': 'Rome',
@@ -82,7 +82,7 @@ export const TRIP_EVENTS = [{
 }, {
   'id': '3',
   'type': 'check-in',
-  'date_from': '2024-10-10T15:00:00.000Z',
+  'date_from': '2024-11-10T15:00:00.000Z',
   'date_to': '2024-11-10T15:20:00.000Z', // 20 minutes
   'destination': {
     'name': 'Venice',

@@ -12,13 +12,13 @@ export default class TripEventsModel extends Observable {
     return this.#tripEvents;
   }
 
-  addTripEvents(updateType, newTripEvent) {
+  addTripEvent(updateType, newTripEvent) {
     this.#tripEvents.push(newTripEvent);
 
     this._notify(updateType, newTripEvent);
   }
 
-  updateTripEvents = (updateType, updatingTripEvent) => {
+  updateTripEvent = (updateType, updatingTripEvent) => {
     const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === updatingTripEvent.id);
 
     if (changingTripEventIndex === -1) {
@@ -34,7 +34,7 @@ export default class TripEventsModel extends Observable {
     this._notify(updateType, updatingTripEvent);
   };
 
-  deleteTripEvents = (updateType, deletingTripEvent) => {
+  deleteTripEvent = (updateType, deletingTripEvent) => {
     const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === deletingTripEvent.id);
 
     if (changingTripEventIndex === -1) {

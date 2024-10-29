@@ -1,6 +1,6 @@
-import * as dayjs from 'dayjs';
 import { TRIPS_FILTER } from '../constants.js';
 import { remove, render, replace } from '../framework/render.js';
+import { filterEventsByFuture, filterEventsByPast } from '../utils/utils.js';
 import TripInfoView from '../view/trip-info-view.js';
 
 export default class TripInfoPresenter {
@@ -29,9 +29,9 @@ export default class TripInfoPresenter {
 
     switch (this.tripFilter) {
       case TRIPS_FILTER.FUTURE:
-        return this.filterEventsByFuture(tripEventsCopy);
+        return filterEventsByFuture(tripEventsCopy);
       case TRIPS_FILTER.PAST:
-        return this.filterEventsByPast(tripEventsCopy);
+        return filterEventsByPast(tripEventsCopy);
     }
 
     return this.#tripEventsModel.tripEvents;
@@ -59,28 +59,6 @@ export default class TripInfoPresenter {
 
     replace(this.#tripInfoView, previousTripInfoView);
     remove(previousTripInfoView);
-  };
-
-  filterEventsByFuture = (tripEvents) => {
-    const filteredEventsByFuture = tripEvents.filter((tripEvent) => {
-      const currentDate = dayjs();
-      const startDate = dayjs(tripEvent.date_from);
-
-      return startDate.isAfter(currentDate);
-    });
-
-    return filteredEventsByFuture;
-  };
-
-  filterEventsByPast = (tripEvents) => {
-    const filteredEventsByPast = tripEvents.filter((tripEvent) => {
-      const currentDate = dayjs();
-      const endDate = dayjs(tripEvent.date_to);
-
-      return endDate.isBefore(currentDate);
-    });
-
-    return filteredEventsByPast;
   };
 
   initalize() {

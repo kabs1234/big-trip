@@ -5,9 +5,11 @@ const createTripAddEventButtonTemplate = () => (`
 `);
 
 export default class TripAddEventButtonView extends AbstractView {
+
   setAddEventButtonClickHandler = (callback) => {
     this._callback.addEventButtonClick = callback;
-    this.element.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addEventButtonClickHandler);
+
+    this.element.addEventListener('click', this.#addEventButtonClickHandler);
   };
 
   #addEventButtonClickHandler = (evt) => {

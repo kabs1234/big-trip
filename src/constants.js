@@ -22,4 +22,5 @@ export const UPDATE_TYPE = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  EXTRA: 'EXTRA',
 };
