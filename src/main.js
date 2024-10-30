@@ -1,4 +1,4 @@
-import { render } from './framework/render.js';
+import { render, replace } from './framework/render.js';
 import { TRIP_EVENTS } from './mocks/trip-events.js';
 import { TRIP_OFFERS } from './mocks/trip-offers.js';
 import { TRIP_DESTINATIONS } from './mocks/trip-destinations.js';
@@ -12,36 +12,60 @@ import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import TripFiltersPresenter from './presenter/trip-filters-presenter.js';
 import TripAddEventButtonView from './view/trip-add-event-button-view.js';
 import TripFilterModel from './model/trip-filter-model.js';
+import TripPointsApi from './service/trip-points-api.js';
+import TripDataLoading from './view/trip-data-loading-view.js';
 
-const tripMainContainer = document.querySelector('.page-body__container');
-const tripEventsContainer = document.querySelector('.trip-events');
+const endPoint = 'https://17.ecmascript.htmlacademy.pro/big-trip';
+const authorizationToken = 'Basic z38b8jdrdwe';
 
-const tripEventsModel = new TripEventsModel(TRIP_EVENTS);
-const tripOffersModel = new TripOffersModel(TRIP_OFFERS);
-const tripDestinationsModel = new TripDestinationsModel(TRIP_DESTINATIONS);
-const tripFilterModel = new TripFilterModel();
+const tripPointsApi = new TripPointsApi(endPoint, authorizationToken);
 
-const tripHeaderContainer = new TripHeaderContainerView();
-const tripInfoPresenter = new TripInfoPresenter(tripEventsModel, tripOffersModel, tripFilterModel, tripHeaderContainer.element);
-const tripFiltersPresenter = new TripFiltersPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
-const tripAddEventButtonView = new TripAddEventButtonView();
+const initalizeApp = async () => {
+  const tripMainContainer = document.querySelector('.page-body__container');
+  const tripEventsContainer = document.querySelector('.trip-events');
 
-const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripOffersModel, tripDestinationsModel, tripFilterModel, tripEventsContainer);
+  const tripEventsData = await tripPointsApi.tripEvents;
+  const tripOffersData = await tripPointsApi.tripOffers;
+  const tripDestinationsData = await tripPointsApi.tripDestinations;
 
-const handleAddEventFormClose = () => {
-  tripAddEventButtonView.element.disabled = false;
+  const tripEventsModel = new TripEventsModel(tripEventsData);
+  const tripOffersModel = new TripOffersModel(tripOffersData);
+  const tripDestinationsModel = new TripDestinationsModel(tripDestinationsData);
+
+  const tripFilterModel = new TripFilterModel();
+
+  const tripHeaderContainer = new TripHeaderContainerView();
+  document.querySelector('.trip-main').remove();
+
+  const tripInfoPresenter = new TripInfoPresenter(tripEventsModel, tripOffersModel, tripFilterModel, tripHeaderContainer.element);
+  const tripFiltersPresenter = new TripFiltersPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
+  const tripAddEventButtonView = new TripAddEventButtonView();
+
+  document.querySelector('.trip-events__msg').remove();
+  const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripOffersModel, tripDestinationsModel, tripFilterModel, tripEventsContainer);
+
+  const handleAddEventFormClose = () => {
+    tripAddEventButtonView.element.disabled = false;
+  };
+
+  const handleAddEventButtonClick = () => {
+    tripAddEventButtonView.element.disabled = true;
+    tripEventsPresenter.createTripNewEvent(handleAddEventFormClose);
+  };
+
+  tripAddEventButtonView.setAddEventButtonClickHandler(handleAddEventButtonClick);
+
+  render(tripHeaderContainer, tripMainContainer);
+  tripInfoPresenter.initalize();
+  tripFiltersPresenter.initalize();
+  render(tripAddEventButtonView, tripHeaderContainer.element);
+
+  tripEventsPresenter.initalize();
 };
 
-const handleAddEventButtonClick = () => {
-  tripAddEventButtonView.element.disabled = true;
-  tripEventsPresenter.createTripNewEvent(handleAddEventFormClose);
-};
+document.body.innerHTML = '';
+const tripLoadingElement = new TripDataLoading().element;
 
-tripAddEventButtonView.setAddEventButtonClickHandler(handleAddEventButtonClick);
+document.body.append(tripLoadingElement.children[0], tripLoadingElement.children[1]);
+initalizeApp();
 
-render(tripHeaderContainer, tripMainContainer);
-tripInfoPresenter.initalize();
-tripFiltersPresenter.initalize();
-render(tripAddEventButtonView, tripHeaderContainer.element);
-
-tripEventsPresenter.initalize();
