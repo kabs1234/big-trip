@@ -61,31 +61,38 @@ export default class TripEventCreator extends AbstractStatefulView {
     const tripEventStartTimeInput = this.element.querySelector('#event-start-time-1');
     const tripEventEndTimeInput = this.element.querySelector('#event-end-time-1');
 
-    const initializeFlatpickr = (inputElement, options) => {
-      const instance = flatpickr(inputElement, {
+    tripEventStartTimeInput.addEventListener('click', () => {
+      const flatpickrStartTimeInstance = flatpickr(tripEventStartTimeInput, {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
         time_24hr: true,
-        onClose: () => instance.destroy(),
-        onChange: (selectedDates) => {
-          this.eventEndDateHandler(selectedDates[0].toISOString());
-        },
-        ...options,
-      });
-
-      instance.open();
-    };
-
-    tripEventStartTimeInput.addEventListener('click', () => {
-      initializeFlatpickr(tripEventStartTimeInput, {
         maxDate: tripEventEndTimeInput.value,
+        onChange: (selectedDates) => {
+          this.eventStartDateHandler(selectedDates[0].toISOString());
+        },
+        onClose: () => {
+          flatpickrStartTimeInstance.destroy();
+        }
       });
+
+      flatpickrStartTimeInstance.open();
     });
 
     tripEventEndTimeInput.addEventListener('click', () => {
-      initializeFlatpickr(tripEventEndTimeInput, {
+      const flatpickrEndTimeInstance = flatpickr(tripEventEndTimeInput, {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        time_24hr: true,
         minDate: tripEventStartTimeInput.value,
+        onChange: (selectedDates) => {
+          this.eventEndDateHandler(selectedDates[0].toISOString());
+        },
+        onClose: () => {
+          flatpickrEndTimeInstance.destroy();
+        }
       });
+
+      flatpickrEndTimeInstance.open();
     });
   };
 

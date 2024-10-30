@@ -135,7 +135,6 @@ export default class TripEventsPresenter {
     switch (userAction) {
       case USER_ACTION.ADD_TRIP:
         this.#tripEventsModel.addTripEvent(updateType, changingTripEvent);
-        console.log(this.tripEvents);
         break;
       case USER_ACTION.DELETE_TRIP:
         this.#tripEventsModel.deleteTripEvent(updateType, changingTripEvent);

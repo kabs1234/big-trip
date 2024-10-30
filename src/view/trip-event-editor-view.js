@@ -1,4 +1,3 @@
-import * as dayjs from 'dayjs';
 import TripEventCreator from '../utils/trip-event-creator.js';
 import { createDestinationContainer, createTripEventDestinationList, createTripEventOffers, createTripEventTime, createTripEventTypeCheckbox } from '../utils/trip-creator-views.js';
 

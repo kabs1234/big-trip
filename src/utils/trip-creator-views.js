@@ -76,10 +76,10 @@ export const createTripEventTime = (tripEvent) => {
   return (`
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden event__label event__label--start-time" for="event-start-time-1">From</label>
-      <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value='${fullFormattedStartDate}'>
+      <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value='${fullFormattedStartDate}' required>
       —
       <label class="visually-hidden event__label event__label--end-time" for="event-end-time-1">To</label>
-      <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value='${fullFormattedEndDate}'>
+      <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value='${fullFormattedEndDate}' required>
     </div>
   `);
 };

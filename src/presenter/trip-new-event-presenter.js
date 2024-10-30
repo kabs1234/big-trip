@@ -44,6 +44,7 @@ export default class TripNewEventPresenter {
 
   onEscKeyDown = (evt) => {
     if (evt.key === 'Escape') {
+      evt.preventDefault();
       this.destroy();
     }
   };

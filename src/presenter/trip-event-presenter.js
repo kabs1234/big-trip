@@ -34,6 +34,8 @@ export default class TripEventPresenter {
     const previousTripEventEditorView = this.#tripEventEditorView;
 
     this.#tripEventView = new TripEventView(this.#tripEvent, this.#tripOffers);
+    this.#tripEventEditorView = new TripEventEditorView(this.#tripEvent, this.#tripOffers, this.#tripDestinations);
+
     this.setupTripEventEditor();
     this.setHandlersToTripEvent();
 
@@ -63,9 +65,6 @@ export default class TripEventPresenter {
 
   closeTripEventEditor = () => {
     replace(this.#tripEventView, this.#tripEventEditorView);
-    this.setupTripEventEditor();
-
-    this.#tripEventEditorView.reset(this.#tripEvent);
     document.removeEventListener('keydown', this.onEscKeyDown);
     this.#mode = MODE.DEFAULT;
   };
@@ -76,7 +75,6 @@ export default class TripEventPresenter {
   };
 
   setupTripEventEditor = () => {
-    this.#tripEventEditorView = new TripEventEditorView(this.#tripEvent, this.#tripOffers, this.#tripDestinations);
     this.#tripEventEditorView.setCloseEditorClickHandler(this.closeTripEventEditor);
     this.#tripEventEditorView.setDeleteButtonClickHandler(this.deleteTripEvent);
     this.#tripEventEditorView.setFormSubmitHandler(this.submitTripEvent);
