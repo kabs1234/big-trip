@@ -1,52 +1,47 @@
+import { UPDATE_TYPE } from '../constants.js';
 import Observable from '../framework/observable.js';
 
 export default class TripEventsModel extends Observable {
-  #tripEvents = null;
+  #tripPointsApi = null;
+  #tripEventsData = [];
+  #tripOffersData = [];
+  #tripDestinationsData = [];
 
-  constructor(tripEvents) {
+  constructor(tripPointsApi) {
     super();
-    this.#tripEvents = tripEvents;
+    this.#tripPointsApi = tripPointsApi;
   }
 
   get tripEvents() {
-    return this.#tripEvents;
+    return this.#tripEventsData;
   }
 
-  addTripEvent(updateType, newTripEvent) {
-    this.#tripEvents.push(newTripEvent);
-
-    this._notify(updateType, newTripEvent);
+  get tripOffers() {
+    return this.#tripOffersData;
   }
 
-  updateTripEvent = (updateType, updatingTripEvent) => {
-    const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === updatingTripEvent.id);
+  get tripDestinations() {
+    return this.#tripDestinationsData;
+  }
 
-    if (changingTripEventIndex === -1) {
-      throw new Error('Can\'t update unexisting event');
+  init = async () => {
+    try {
+      const tripEventsData = await this.#tripPointsApi.tripEvents;
+      const tripOffersData = await this.#tripPointsApi.tripOffers;
+      const tripDestinationsData = await this.#tripPointsApi.tripDestinations;
+
+      this.#tripEventsData = [...tripEventsData];
+      this.#tripOffersData = [...tripOffersData];
+      this.#tripDestinationsData = [...tripDestinationsData];
+    } catch (err) {
+      this.#tripEventsData = [];
     }
 
-    this.#tripEvents = [
-      ...this.tripEvents.slice(0, changingTripEventIndex),
-      updatingTripEvent,
-      ...this.tripEvents.slice(changingTripEventIndex + 1),
-    ];
-
-    this._notify(updateType, updatingTripEvent);
+    this._notify(UPDATE_TYPE.INIT);
   };
 
-  deleteTripEvent = (updateType, deletingTripEvent) => {
-    const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === deletingTripEvent.id);
-
-    if (changingTripEventIndex === -1) {
-      throw new Error('Can\'t delete unexisting event');
-    }
-
-    this.#tripEvents = [
-      ...this.tripEvents.slice(0, changingTripEventIndex),
-      ...this.tripEvents.slice(changingTripEventIndex + 1),
-    ];
-
-    this._notify(updateType);
+  getTripOffers = async () => {
 
   };
+
 }

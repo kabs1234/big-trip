@@ -35,3 +35,42 @@ export const filterEventsByPast = (tripEvents) => {
 
   return filteredEventsByPast;
 };
+
+// updateTripEvent = (updateType, updatingTripEvent) => {
+//   const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === updatingTripEvent.id);
+
+//   if (changingTripEventIndex === -1) {
+//     throw new Error('Can\'t update unexisting event');
+//   }
+
+//   this.#tripEvents = [
+//     ...this.tripEvents.slice(0, changingTripEventIndex),
+//     updatingTripEvent,
+//     ...this.tripEvents.slice(changingTripEventIndex + 1),
+//   ];
+
+
+//   this._notify(updateType, updatingTripEvent);
+// };
+
+// deleteTripEvent = (updateType, deletingTripEvent) => {
+//   const changingTripEventIndex = this.tripEvents.findIndex((tripEvent) => tripEvent.id === deletingTripEvent.id);
+
+//   if (changingTripEventIndex === -1) {
+//     throw new Error('Can\'t delete unexisting event');
+//   }
+
+//   this.#tripEvents = [
+//     ...this.tripEvents.slice(0, changingTripEventIndex),
+//     ...this.tripEvents.slice(changingTripEventIndex + 1),
+//   ];
+
+//   this._notify(updateType);
+
+// };
+
+// addTripEvent(updateType, newTripEvent) {
+//   this.#tripEvents.push(newTripEvent);
+
+//   this._notify(updateType, newTripEvent);
+// }

@@ -7,24 +7,23 @@ import TripEventPresenter from './trip-event-presenter.js';
 import TripEventsEmptyView from '../view/trip-events-empty-view.js';
 import TripNewEventPresenter from './trip-new-event-presenter.js';
 import { filterEventsByFuture, filterEventsByPast } from '../utils/utils.js';
+import TripDataLoadingView from '../view/trip-data-loading-view.js';
 
 export default class TripEventsPresenter {
   #tripEventSortsView = null;
   #tripEventsEmptyView = null;
   #tripEventsMap = new Map();
+  #tripDataLoadingView = new TripDataLoadingView();
   #tripEventsContainerView = new TripEventsContainerView();
   #container = null;
   #tripNewEventPresenter = null;
   #tripEventsModel = null;
-  #tripOffersModel = null;
-  #tripDestinationsModel = null;
   #tripsFilterModel = null;
   #sortType = SORT_TYPE.DAY;
+  #isLoading = true;
 
-  constructor(tripEventsModel, tripOffersModel, tripDestinationsModel, tripsFilterModel, container) {
+  constructor(tripEventsModel, tripsFilterModel, container) {
     this.#tripEventsModel = tripEventsModel;
-    this.#tripOffersModel = tripOffersModel;
-    this.#tripDestinationsModel = tripDestinationsModel;
     this.#tripsFilterModel = tripsFilterModel;
     this.#container = container;
     this.#tripNewEventPresenter = new TripNewEventPresenter(this.#tripEventsContainerView.element, this.handleViewChange);
@@ -62,11 +61,11 @@ export default class TripEventsPresenter {
   }
 
   get tripOffers() {
-    return this.#tripOffersModel.tripOffers;
+    return this.#tripEventsModel.tripOffers;
   }
 
   get tripDestinations() {
-    return this.#tripDestinationsModel.tripDestinations;
+    return this.#tripEventsModel.tripDestinations;
   }
 
   createTripNewEvent = (callback) => {
@@ -79,7 +78,7 @@ export default class TripEventsPresenter {
     render(this.#tripEventsContainerView, this.#container);
 
     tripEvents.map((tripEvent) => {
-      const tripEventPresenter = new TripEventPresenter(this.#tripEventsContainerView, this.handleViewChange, this.handleTripEventModeChange);
+      const tripEventPresenter = new TripEventPresenter(this.#tripEventsContainerView, this.handleViewChange, this.handleModeChange);
       this.#tripEventsMap.set(tripEvent.id, tripEventPresenter);
       tripEventPresenter.initalize(tripEvent, this.tripOffers, this.tripDestinations);
     });
@@ -147,6 +146,11 @@ export default class TripEventsPresenter {
 
   handleModelChange = (updateType, changingTripEvent) => {
     switch (updateType) {
+      case UPDATE_TYPE.INIT:
+        this.#isLoading = false;
+        remove(this.#tripDataLoadingView);
+        this.initalize();
+        break;
       case UPDATE_TYPE.PATCH:
         this.#tripEventsMap.get(changingTripEvent.id).initalize(changingTripEvent, this.tripOffers, this.tripDestinations);
         break;
@@ -172,7 +176,7 @@ export default class TripEventsPresenter {
     }
   };
 
-  handleTripEventModeChange = () => {
+  handleModeChange = () => {
     this.#tripNewEventPresenter.destroy();
     this.#tripEventsMap.forEach((presenter) => presenter.resetView());
   };
@@ -218,6 +222,11 @@ export default class TripEventsPresenter {
 
 
   initalize = () => {
+    if (this.#isLoading) {
+      render(this.#tripDataLoadingView, this.#container);
+      return;
+    }
+
     if (this.tripEvents.length === 0) {
       this.renderTripEventsEmptyMessage();
       return;

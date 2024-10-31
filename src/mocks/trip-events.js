@@ -583,5 +583,3 @@ export const TRIP_EVENTS = [{
   'is_favorite': true,
   'offers': [5, 6]
 }];
-
-// export const TRIP_EVENTS = [];

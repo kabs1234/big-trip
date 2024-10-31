@@ -23,4 +23,11 @@ export const UPDATE_TYPE = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   EXTRA: 'EXTRA',
+  INIT: 'INIT',
+};
+
+export const METHOD = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
 };

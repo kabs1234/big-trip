@@ -1,5 +1,5 @@
 import { TRIPS_FILTER } from '../constants.js';
-import { remove, render, replace } from '../framework/render.js';
+import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import { filterEventsByFuture, filterEventsByPast } from '../utils/utils.js';
 import TripInfoView from '../view/trip-info-view.js';
 
@@ -7,12 +7,10 @@ export default class TripInfoPresenter {
   #container = null;
   #tripInfoView = null;
   #tripEventsModel = null;
-  #tripOffersModel = null;
   #tripFilterModel = null;
 
-  constructor(tripEventsModel, tripOffersModel, tripFilterModel, container) {
+  constructor(tripEventsModel, tripFilterModel, container) {
     this.#tripEventsModel = tripEventsModel;
-    this.#tripOffersModel = tripOffersModel;
     this.#tripFilterModel = tripFilterModel;
     this.#container = container;
 
@@ -38,13 +36,11 @@ export default class TripInfoPresenter {
   }
 
   get tripOffers() {
-    return this.#tripOffersModel.tripOffers;
+    return this.#tripEventsModel.tripOffers;
   }
 
   #renderTripInfo = () => {
     if (this.tripEvents.length === 0) {
-      // remove(this.#tripInfoView);
-      // this.#tripInfoView = null;
       return;
     }
 
@@ -53,7 +49,7 @@ export default class TripInfoPresenter {
     this.#tripInfoView = new TripInfoView(this.tripEvents, this.tripOffers);
 
     if (previousTripInfoView === null) {
-      render(this.#tripInfoView, this.#container);
+      render(this.#tripInfoView, this.#container, RenderPosition.AFTERBEGIN);
       return;
     }
 

@@ -26,12 +26,18 @@ export default class TripFiltersPresenter {
     const previousTripFilterView = this.#tripFiltersView;
 
     this.#tripFiltersView = new TripFiltersView(this.tripFilter);
-    this.#setEventListeners();
 
-    if (previousTripFilterView === null) {
+    if (this.#tripEventsModel.tripEvents.length === 0) {
       render(this.#tripFiltersView, this.#container);
       return;
     }
+
+    this.#setEventListeners();
+
+    // if (previousTripFilterView === null) {
+    //   render(this.#tripFiltersView, this.#container);
+    //   return;
+    // }
 
     replace(this.#tripFiltersView, previousTripFilterView);
     remove(previousTripFilterView);
@@ -70,6 +76,5 @@ export default class TripFiltersPresenter {
 
   initalize() {
     this.#renderTripFilters();
-    this.#setEventListeners();
   }
 }
