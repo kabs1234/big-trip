@@ -198,7 +198,6 @@ export default class TripEventsPresenter extends UiBlocker {
     }
 
     this.#tripEventsEmptyView = this.destroyView(this.#tripEventsEmptyView);
-    this.#sortType = SORT_TYPE.DAY;
     this.renderTripSortings(this.#sortType);
     this.#renderTripEvents(this.tripEvents);
   };
