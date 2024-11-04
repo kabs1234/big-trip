@@ -1,15 +1,9 @@
-import { USER_ACTION, UPDATE_TYPE } from '../constants.js';
+import { USER_ACTION, UPDATE_TYPE, MODE } from '../constants.js';
 import { remove, render, replace } from '../framework/render.js';
-import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import TripEventEditorView from '../view/trip-event-editor-view.js';
 import TripEventView from '../view/trip-event-view.js';
 
-const MODE = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
-
-export default class TripEventPresenter extends UiBlocker {
+export default class TripEventPresenter {
   #tripEventsContainer = null;
   #tripEventEditorView = null;
   #tripEventView = null;
@@ -21,7 +15,6 @@ export default class TripEventPresenter extends UiBlocker {
   #tripDestinations = null;
 
   constructor(tripEventsContainer, changeData, changeMode) {
-    super(0, 300);
     this.#tripEventsContainer = tripEventsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;

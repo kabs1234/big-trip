@@ -23,18 +23,29 @@ const sortEventsByDay = (tripEvents) => {
 };
 
 const createTripTitle = (tripEvents) => {
+  if (tripEvents.length === 0) {
+    return '';
+  }
+
   const sortedEventsByDay = sortEventsByDay(tripEvents);
   const tripEventsDestinations = sortedEventsByDay.map((tripEvent) => tripEvent.destination.name);
-  const tripEventsSet = new Set(tripEventsDestinations);
 
-  if (tripEventsSet.size > 3) {
+  if (tripEventsDestinations.length === 1) {
+    return `<h1 class="trip-info__title">${tripEventsDestinations[0]}`;
+  }
+
+  if (tripEventsDestinations.length > 3) {
     return `<h1 class="trip-info__title">${tripEventsDestinations[0]} — ... — ${tripEventsDestinations.slice(-1)}</h1>`;
   }
 
-  return `<h1 class="trip-info__title">${tripEventsDestinations[0]} — ${tripEventsDestinations[1]} ${tripEventsSet.size === 3 ? `— ${tripEventsDestinations[2]}` : ''}</h1>`;
+  return `<h1 class="trip-info__title">${tripEventsDestinations[0]} — ${tripEventsDestinations[1]} ${tripEventsDestinations.length === 3 ? `— ${tripEventsDestinations[2]}` : ''}</h1>`;
 };
 
 const createTripDates = (tripEvents) => {
+  if (tripEvents.length === 0) {
+    return '';
+  }
+
   const sortedEventsByDay = sortEventsByDay(tripEvents);
 
   const startDate = sortedEventsByDay[0].date_from;
@@ -44,6 +55,7 @@ const createTripDates = (tripEvents) => {
 
   const endDate = sortedEventsByDay.slice(-1)[0].date_to;
   const convertedEndDate = new Date(endDate);
+
   const endDateMonth = convertedEndDate.getMonth();
   let humanizedEndDate;
 
@@ -53,7 +65,7 @@ const createTripDates = (tripEvents) => {
     humanizedEndDate = createHumanizedMonthDayDate(endDate);
   }
 
-  return (`<p class="trip-info__dates">${humanizedStartDate} &nbsp;—&nbsp;${humanizedEndDate}</p>`);
+  return `<p class="trip-info__dates">${humanizedStartDate} &nbsp;—&nbsp;${humanizedEndDate}</p>`;
 };
 
 const createTripTitleAndDate = (tripEvents) => (`

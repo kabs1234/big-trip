@@ -8,6 +8,7 @@ export default class TripInfoPresenter {
   #tripInfoView = null;
   #tripEventsModel = null;
   #tripFilterModel = null;
+  #isInitalized = false;
 
   constructor(tripEventsModel, tripFilterModel, container) {
     this.#tripEventsModel = tripEventsModel;
@@ -40,7 +41,14 @@ export default class TripInfoPresenter {
   }
 
   #renderTripInfo = () => {
-    if (this.tripEvents.length === 0) {
+    if (!this.#isInitalized) {
+      this.#isInitalized = true;
+      return;
+    }
+
+    if (this.#tripEventsModel.tripEvents.length === 0 && this.#isInitalized) {
+      remove(this.#tripInfoView);
+      this.#tripInfoView = null;
       return;
     }
 

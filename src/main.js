@@ -10,43 +10,40 @@ import TripFilterModel from './model/trip-filter-model.js';
 import TripPointsApi from './service/trip-points-api.js';
 
 const endPoint = 'https://17.ecmascript.htmlacademy.pro/big-trip';
-const authorizationToken = 'Basic z123b8xdrdw2';
+const authorizationToken = 'Basic z123b8xdrdw';
 
 const tripPointsApi = new TripPointsApi(endPoint, authorizationToken);
 
-const initalizeApp = () => {
-  const tripMainContainer = document.querySelector('.page-body__container');
-  const tripEventsContainer = document.querySelector('.trip-events');
-  const tripEventsModel = new TripEventsModel(tripPointsApi);
-  const tripFilterModel = new TripFilterModel();
+const tripMainContainer = document.querySelector('.page-body__container');
+const tripEventsContainer = document.querySelector('.trip-events');
+const tripEventsModel = new TripEventsModel(tripPointsApi);
+const tripFilterModel = new TripFilterModel();
 
-  const tripHeaderContainer = new TripHeaderContainerView();
-  const tripAddEventButtonView = new TripAddEventButtonView();
+const tripHeaderContainer = new TripHeaderContainerView();
+const tripAddEventButtonView = new TripAddEventButtonView();
 
-  const tripInfoPresenter = new TripInfoPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
-  const tripFiltersPresenter = new TripFiltersPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
-  const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripFilterModel, tripEventsContainer);
+const tripInfoPresenter = new TripInfoPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
+const tripFiltersPresenter = new TripFiltersPresenter(tripEventsModel, tripFilterModel, tripHeaderContainer.element);
+const tripEventsPresenter = new TripEventsPresenter(tripEventsModel, tripFilterModel, tripEventsContainer);
 
-  const handleAddEventFormClose = () => {
-    tripAddEventButtonView.element.disabled = false;
-  };
-
-  const handleAddEventButtonClick = () => {
-    tripAddEventButtonView.element.disabled = true;
-    tripEventsPresenter.createTripNewEvent(handleAddEventFormClose);
-  };
-
-  render(tripHeaderContainer, tripMainContainer);
-  tripFiltersPresenter.initalize();
-  render(tripAddEventButtonView, tripHeaderContainer.element);
-
-  tripInfoPresenter.initalize();
-  tripEventsPresenter.initalize();
-  tripEventsModel.init()
-    .finally(() => {
-      tripAddEventButtonView.setAddEventButtonClickHandler(handleAddEventButtonClick);
-    });
+const handleAddEventFormClose = () => {
+  tripAddEventButtonView.element.disabled = false;
 };
 
-initalizeApp();
+const handleAddEventButtonClick = () => {
+  tripAddEventButtonView.element.disabled = true;
+  tripEventsPresenter.createTripNewEvent(handleAddEventFormClose);
+};
+
+render(tripHeaderContainer, tripMainContainer);
+tripFiltersPresenter.initalize();
+render(tripAddEventButtonView, tripHeaderContainer.element);
+
+tripInfoPresenter.initalize();
+tripEventsPresenter.initalize();
+tripEventsModel.init()
+  .finally(() => {
+    tripAddEventButtonView.setAddEventButtonClickHandler(handleAddEventButtonClick);
+  });
+
 

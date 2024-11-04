@@ -1,4 +1,12 @@
+export const TIME_BEFORE_BLOCK = 0;
+export const MIN_BLOCK_TIME = 300;
+
 export const MONTHS_LIST = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+export const MODE = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
 export const TRIPS_FILTER = {
   EVERYTHING: 'EVERYTHING',

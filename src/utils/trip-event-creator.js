@@ -62,38 +62,31 @@ export default class TripEventCreator extends AbstractStatefulView {
     const tripEventStartTimeInput = this.element.querySelector('#event-start-time-1');
     const tripEventEndTimeInput = this.element.querySelector('#event-end-time-1');
 
-    tripEventStartTimeInput.addEventListener('click', () => {
-      const flatpickrStartTimeInstance = flatpickr(tripEventStartTimeInput, {
-        dateFormat: 'd/m/y H:i',
-        enableTime: true,
-        'time_24hr': true,
-        maxDate: tripEventEndTimeInput.value,
-        onChange: (selectedDates) => {
-          this.eventStartDateHandler(selectedDates[0].toISOString());
-        },
-        onClose: () => {
-          flatpickrStartTimeInstance.destroy();
-        }
-      });
+    const flatpickrDefaultSettings = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      'time_24hr': true,
+      minuteIncrement: 1,
+    };
 
-      flatpickrStartTimeInstance.open();
+    const initializeFlatpickr = (input, settings, handler) => {
+      const instance = flatpickr(input, {
+        ...flatpickrDefaultSettings,
+        ...settings,
+        onChange: (selectedDates) => {
+          handler(selectedDates[0].toISOString());
+        },
+        onClose: () => instance.destroy(),
+      });
+      instance.open();
+    };
+
+    tripEventStartTimeInput.addEventListener('click', () => {
+      initializeFlatpickr(tripEventStartTimeInput, { maxDate: tripEventEndTimeInput.value }, this.eventStartDateHandler);
     });
 
     tripEventEndTimeInput.addEventListener('click', () => {
-      const flatpickrEndTimeInstance = flatpickr(tripEventEndTimeInput, {
-        dateFormat: 'd/m/y H:i',
-        enableTime: true,
-        'time_24hr': true,
-        minDate: tripEventStartTimeInput.value,
-        onChange: (selectedDates) => {
-          this.eventEndDateHandler(selectedDates[0].toISOString());
-        },
-        onClose: () => {
-          flatpickrEndTimeInstance.destroy();
-        }
-      });
-
-      flatpickrEndTimeInstance.open();
+      initializeFlatpickr(tripEventEndTimeInput, { minDate: tripEventStartTimeInput.value }, this.eventEndDateHandler);
     });
   };
 

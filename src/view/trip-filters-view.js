@@ -1,38 +1,46 @@
 import { TRIPS_FILTER } from '../constants.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import { filterEventsByFuture, filterEventsByPast } from '../utils/utils.js';
 
-const createTripFiltersTemplate = (activeFilter) => (`
-  <div class="trip-main__trip-controls  trip-controls">
-    <div class="trip-controls__filters">
-      <h2 class="visually-hidden">Filter events</h2>
-      <form class="trip-filters" action="#" method="get">
-        <div class="trip-filters__filter">
-          <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${activeFilter === TRIPS_FILTER.EVERYTHING ? 'checked' : ''}>
-          <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-        </div>
+const createTripFiltersTemplate = (activeFilter, tripEvents) => {
+  const filteredByFuture = filterEventsByFuture(tripEvents);
+  const filteredByPast = filterEventsByPast(tripEvents);
 
-        <div class="trip-filters__filter">
-          <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${activeFilter === TRIPS_FILTER.FUTURE ? 'checked' : ''}>
-          <label class="trip-filters__filter-label" for="filter-future">Future</label>
-        </div>
+  return (`
+    <div class="trip-main__trip-controls  trip-controls">
+      <div class="trip-controls__filters">
+        <h2 class="visually-hidden">Filter events</h2>
+        <form class="trip-filters" action="#" method="get">
+          <div class="trip-filters__filter">
+            <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${activeFilter === TRIPS_FILTER.EVERYTHING ? 'checked' : ''}>
+            <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
+          </div>
 
-        <div class="trip-filters__filter">
-          <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" ${activeFilter === TRIPS_FILTER.PAST ? 'checked' : ''}>
-          <label class="trip-filters__filter-label" for="filter-past">Past</label>
-        </div>
+          <div class="trip-filters__filter">
+            <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${filteredByFuture.length === 0 ? 'disabled' : ''} ${activeFilter === TRIPS_FILTER.FUTURE ? 'checked' : ''}>
+            <label class="trip-filters__filter-label" for="filter-future">Future</label>
+          </div>
 
-        <button class="visually-hidden" type="submit">Accept filter</button>
-      </form>
+          <div class="trip-filters__filter">
+            <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" ${filteredByPast.length === 0 ? 'disabled' : ''} ${activeFilter === TRIPS_FILTER.PAST ? 'checked' : ''}>
+            <label class="trip-filters__filter-label" for="filter-past">Past</label>
+          </div>
+
+          <button class="visually-hidden" type="submit">Accept filter</button>
+        </form>
+      </div>
     </div>
-  </div>
-`);
+  `);
+};
 
 export default class TripFiltersView extends AbstractView {
   #activeFilter = null;
+  #tripEventsData = null;
 
-  constructor(activeFilter) {
+  constructor(activeFilter, tripEventsData) {
     super();
     this.#activeFilter = activeFilter;
+    this.#tripEventsData = tripEventsData;
   }
 
   setFilterByAllClickHandler = (callback) => {
@@ -66,6 +74,6 @@ export default class TripFiltersView extends AbstractView {
   };
 
   get template() {
-    return createTripFiltersTemplate(this.#activeFilter);
+    return createTripFiltersTemplate(this.#activeFilter, this.#tripEventsData);
   }
 }

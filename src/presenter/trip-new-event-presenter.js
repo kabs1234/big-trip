@@ -56,7 +56,7 @@ export default class TripNewEventPresenter {
   };
 
   #submitTripEvent = (updatedTripEvent) => {
-    this.#changeData(USER_ACTION.ADD_TRIP, UPDATE_TYPE.EXTRA, updatedTripEvent);
+    this.#changeData(USER_ACTION.ADD_TRIP, UPDATE_TYPE.MAJOR, updatedTripEvent);
   };
 
   onEscKeyDown = (evt) => {

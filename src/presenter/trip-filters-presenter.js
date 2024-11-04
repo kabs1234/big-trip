@@ -26,7 +26,7 @@ export default class TripFiltersPresenter {
   #renderTripFilters = () => {
     const previousTripFilterView = this.#tripFiltersView;
 
-    this.#tripFiltersView = new TripFiltersView(this.tripFilter);
+    this.#tripFiltersView = new TripFiltersView(this.tripFilter, this.#tripEventsModel.tripEvents);
 
     if (this.#tripEventsModel.tripEvents.length === 0 && !this.#isInitalized) {
       render(this.#tripFiltersView, this.#container);
@@ -41,17 +41,9 @@ export default class TripFiltersPresenter {
   };
 
   #setEventListeners = () => {
-    this.#tripFiltersView.setFilterByAllClickHandler(() => {
-      this.handleFilterChange(TRIPS_FILTER.EVERYTHING);
-    });
-
-    this.#tripFiltersView.setFilterByPastClickHandler(() => {
-      this.handleFilterChange(TRIPS_FILTER.PAST);
-    });
-
-    this.#tripFiltersView.setFilterByFutureClickHandler(() => {
-      this.handleFilterChange(TRIPS_FILTER.FUTURE);
-    });
+    this.#tripFiltersView.setFilterByAllClickHandler(() => this.handleFilterChange(TRIPS_FILTER.EVERYTHING));
+    this.#tripFiltersView.setFilterByPastClickHandler(() => this.handleFilterChange(TRIPS_FILTER.PAST));
+    this.#tripFiltersView.setFilterByFutureClickHandler(() => this.handleFilterChange(TRIPS_FILTER.FUTURE));
   };
 
   handleFilterChange = (filterType) => {

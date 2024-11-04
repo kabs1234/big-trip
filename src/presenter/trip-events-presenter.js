@@ -1,4 +1,4 @@
-import { SORT_TYPE, UPDATE_TYPE, USER_ACTION, TRIPS_FILTER } from '../constants.js';
+import { SORT_TYPE, UPDATE_TYPE, USER_ACTION, TRIPS_FILTER, TIME_BEFORE_BLOCK, MIN_BLOCK_TIME } from '../constants.js';
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import TripEventSortsView from '../view/trip-event-sorts-view.js';
 import TripEventsContainerView from '../view/trip-events-container-view.js';
@@ -24,7 +24,7 @@ export default class TripEventsPresenter extends UiBlocker {
   #isLoading = true;
 
   constructor(tripEventsModel, tripsFilterModel, container) {
-    super(0, 300);
+    super(TIME_BEFORE_BLOCK, MIN_BLOCK_TIME);
     this.#tripEventsModel = tripEventsModel;
     this.#tripsFilterModel = tripsFilterModel;
     this.#container = container;
@@ -73,6 +73,14 @@ export default class TripEventsPresenter extends UiBlocker {
   createTripNewEvent = (callback) => {
     this.#sortType = SORT_TYPE.DAY;
     this.#tripsFilterModel.setTripFilter(UPDATE_TYPE.MAJOR, TRIPS_FILTER.EVERYTHING);
+
+    if (this.tripEvents.length === 0) {
+      remove(this.#tripEventsEmptyView);
+      this.#tripEventsEmptyView = null;
+      this.renderTripSortings(this.#sortType);
+      render(this.#tripEventsContainerView, this.#container);
+    }
+
     this.#tripNewEventPresenter.initalize(this.tripOffers, this.tripDestinations, callback);
   };
 
@@ -161,24 +169,17 @@ export default class TripEventsPresenter extends UiBlocker {
       case UPDATE_TYPE.PATCH:
         this.#tripEventsMap.get(changingTripEvent.id).initalize(changingTripEvent, this.tripOffers, this.tripDestinations);
         break;
-      case UPDATE_TYPE.MINOR:
-        this.clearTripEventsList();
-        this.#renderTripEvents(this.tripEvents);
-        break;
       case UPDATE_TYPE.MAJOR:
         this.resetTripEventsList();
         break;
-      case UPDATE_TYPE.EXTRA:
-        this.resetTripEventsList();
-        break;
       case UPDATE_TYPE.ERROR:
+        this.unblock();
+
         if (!changingTripEvent.id) {
           this.#tripNewEventPresenter.setShake();
-          this.unblock();
           return;
         }
 
-        this.unblock();
         this.#tripEventsMap.get(changingTripEvent.id).setShake();
         break;
     }
