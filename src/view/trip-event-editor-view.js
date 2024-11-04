@@ -21,8 +21,8 @@ const createTripEventEditorTemplate = (tripEvent, tripOffers, tripDestinations) 
           <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" name="event-price" value="${tripEvent.base_price}">
         </div>
 
-        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn btn btn--blue" type="submit" ${tripEvent.isDisabled ? 'disabled' : ''}>${tripEvent.isSaving ? 'Saving' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${tripEvent.isDisabled ? 'disabled' : ''}>${tripEvent.isDeleting ? 'Deleting' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -49,6 +49,13 @@ export default class TripEventEditorView extends TripEventCreator {
 
     this.setInnerHandlers();
   }
+
+  _restoreHandlers = () => {
+    this.setInnerHandlers();
+    this.setCloseEditorClickHandler(this._callback.closeEditor);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteButtonClickHandler(this._callback.deleteButtonClick);
+  };
 
   setCloseEditorClickHandler = (callback) => {
     this._callback.closeEditor = callback;

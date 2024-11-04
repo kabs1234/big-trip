@@ -20,7 +20,7 @@ const createTripNewEventTemplate = (tripEvent, tripOffers, tripDestinations) => 
           <input class="event__input  event__input--price" id="event-price-1" type="number" min='1' name="event-price" value='${tripEvent.base_price}'>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${tripEvent.isDisabled ? 'disabled' : ''}>${tripEvent.isSaving ? 'Saving' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
 
@@ -38,8 +38,8 @@ export default class TripNewEventView extends TripEventCreator {
 
   constructor(tripOffers, tripDestinations) {
     super(TripNewEventView, tripDestinations);
+
     this._state = TripNewEventView.parseTripEventToState({
-      'id': nanoid(),
       'type': 'bus',
       'date_from': '',
       'date_to': '',
@@ -50,12 +50,21 @@ export default class TripNewEventView extends TripEventCreator {
       },
       'base_price': 0,
       'is_favorite': false,
-      'offers': []
+      'offers': [],
+      'isSaving': false,
+      'isDisabled': false
     });
+
     this.#tripOffers = tripOffers;
     this.#tripDestinations = tripDestinations;
     this.setInnerHandlers();
   }
+
+  _restoreHandlers = () => {
+    this.setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteButtonClickHandler(this._callback.deleteButtonClick);
+  };
 
   get template() {
     return createTripNewEventTemplate(this._state, this.#tripOffers, this.#tripDestinations);

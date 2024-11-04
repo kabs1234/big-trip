@@ -38,8 +38,25 @@ export default class TripNewEventPresenter {
     document.addEventListener('keydown', this.onEscKeyDown);
   };
 
+  setSaving = () => {
+    this.#tripNewEventView.updateElement(
+      {...this._state,
+        isSaving: true,
+        isDisabled: true,
+      }
+    );
+  };
+
+  setShake = () => {
+    this.#tripNewEventView.updateElement({
+      isSaving: false,
+      isDisabled: false,
+    });
+    this.#tripNewEventView.shake();
+  };
+
   #submitTripEvent = (updatedTripEvent) => {
-    this.#changeData(USER_ACTION.ADD_TRIP, UPDATE_TYPE.MAJOR, updatedTripEvent);
+    this.#changeData(USER_ACTION.ADD_TRIP, UPDATE_TYPE.EXTRA, updatedTripEvent);
   };
 
   onEscKeyDown = (evt) => {

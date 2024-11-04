@@ -10,7 +10,7 @@ import TripFilterModel from './model/trip-filter-model.js';
 import TripPointsApi from './service/trip-points-api.js';
 
 const endPoint = 'https://17.ecmascript.htmlacademy.pro/big-trip';
-const authorizationToken = 'Basic z38b8jdrdwe';
+const authorizationToken = 'Basic z123b8xdrdw2';
 
 const tripPointsApi = new TripPointsApi(endPoint, authorizationToken);
 

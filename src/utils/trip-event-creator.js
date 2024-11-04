@@ -18,19 +18,20 @@ export default class TripEventCreator extends AbstractStatefulView {
     destination: {
       ...tripEvent.destination,
       name: tripEvent.destination.name
-    }
+    },
+    isSaving: false,
+    isDeleting: false,
+    isDisabled: false
   });
 
   static parseStateToTripEvent = (state) => {
     const tripEvent = {...state};
 
-    return tripEvent;
-  };
+    delete tripEvent.isSaving;
+    delete tripEvent.isDeleting;
+    delete tripEvent.isDisabled;
 
-  _restoreHandlers = () => {
-    this.setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setDeleteButtonClickHandler(this._callback.deleteButtonClick);
+    return tripEvent;
   };
 
   setInnerHandlers = () => {
@@ -65,7 +66,7 @@ export default class TripEventCreator extends AbstractStatefulView {
       const flatpickrStartTimeInstance = flatpickr(tripEventStartTimeInput, {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
-        time_24hr: true,
+        'time_24hr': true,
         maxDate: tripEventEndTimeInput.value,
         onChange: (selectedDates) => {
           this.eventStartDateHandler(selectedDates[0].toISOString());
@@ -82,7 +83,7 @@ export default class TripEventCreator extends AbstractStatefulView {
       const flatpickrEndTimeInstance = flatpickr(tripEventEndTimeInput, {
         dateFormat: 'd/m/y H:i',
         enableTime: true,
-        time_24hr: true,
+        'time_24hr': true,
         minDate: tripEventStartTimeInput.value,
         onChange: (selectedDates) => {
           this.eventEndDateHandler(selectedDates[0].toISOString());
@@ -116,6 +117,7 @@ export default class TripEventCreator extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
     this._callback.formSubmit(this.#creatingView.parseStateToTripEvent(this._state));
   };
 
@@ -152,13 +154,13 @@ export default class TripEventCreator extends AbstractStatefulView {
 
   eventStartDateHandler = (str) => {
     this.updateElement({
-      date_from: str
+      'date_from': str
     });
   };
 
   eventEndDateHandler = (str) => {
     this.updateElement({
-      date_to: str
+      'date_to': str
     });
   };
 
@@ -187,7 +189,7 @@ export default class TripEventCreator extends AbstractStatefulView {
     evt.preventDefault();
 
     this.updateElement({
-      base_price: +evt.target.value
+      'base_price': +evt.target.value
     });
   };
 

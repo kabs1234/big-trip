@@ -8,8 +8,9 @@ import TripEventsEmptyView from '../view/trip-events-empty-view.js';
 import TripNewEventPresenter from './trip-new-event-presenter.js';
 import { filterEventsByFuture, filterEventsByPast } from '../utils/utils.js';
 import TripDataLoadingView from '../view/trip-data-loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
-export default class TripEventsPresenter {
+export default class TripEventsPresenter extends UiBlocker {
   #tripEventSortsView = null;
   #tripEventsEmptyView = null;
   #tripEventsMap = new Map();
@@ -23,6 +24,7 @@ export default class TripEventsPresenter {
   #isLoading = true;
 
   constructor(tripEventsModel, tripsFilterModel, container) {
+    super(0, 300);
     this.#tripEventsModel = tripEventsModel;
     this.#tripsFilterModel = tripsFilterModel;
     this.#container = container;
@@ -133,15 +135,20 @@ export default class TripEventsPresenter {
   handleViewChange = (userAction, updateType, changingTripEvent) => {
     switch (userAction) {
       case USER_ACTION.ADD_TRIP:
+        this.#tripNewEventPresenter.setSaving();
         this.#tripEventsModel.addTripEvent(updateType, changingTripEvent);
         break;
       case USER_ACTION.DELETE_TRIP:
+        this.#tripEventsMap.get(changingTripEvent.id).setDeleting();
         this.#tripEventsModel.deleteTripEvent(updateType, changingTripEvent);
         break;
       case USER_ACTION.UPDATE_TRIP:
+        this.#tripEventsMap.get(changingTripEvent.id).setSaving();
         this.#tripEventsModel.updateTripEvent(updateType, changingTripEvent);
         break;
     }
+
+    this.block();
   };
 
   handleModelChange = (updateType, changingTripEvent) => {
@@ -159,21 +166,40 @@ export default class TripEventsPresenter {
         this.#renderTripEvents(this.tripEvents);
         break;
       case UPDATE_TYPE.MAJOR:
-        this.clearTripEventsList();
-
-        if (this.tripEvents.length === 0) {
-          remove(this.#tripEventSortsView);
-          this.renderTripEventsEmptyMessage();
-          this.#tripEventSortsView = this.destroyView(this.#tripEventSortsView);
+        this.resetTripEventsList();
+        break;
+      case UPDATE_TYPE.EXTRA:
+        this.resetTripEventsList();
+        break;
+      case UPDATE_TYPE.ERROR:
+        if (!changingTripEvent.id) {
+          this.#tripNewEventPresenter.setShake();
+          this.unblock();
           return;
         }
 
-        this.#tripEventsEmptyView = this.destroyView(this.#tripEventsEmptyView);
-        this.#sortType = SORT_TYPE.DAY;
-        this.renderTripSortings(this.#sortType);
-        this.#renderTripEvents(this.tripEvents);
+        this.unblock();
+        this.#tripEventsMap.get(changingTripEvent.id).setShake();
         break;
     }
+
+    this.unblock();
+  };
+
+  resetTripEventsList = () => {
+    this.clearTripEventsList();
+
+    if (this.tripEvents.length === 0) {
+      remove(this.#tripEventSortsView);
+      this.renderTripEventsEmptyMessage();
+      this.#tripEventSortsView = this.destroyView(this.#tripEventSortsView);
+      return;
+    }
+
+    this.#tripEventsEmptyView = this.destroyView(this.#tripEventsEmptyView);
+    this.#sortType = SORT_TYPE.DAY;
+    this.renderTripSortings(this.#sortType);
+    this.#renderTripEvents(this.tripEvents);
   };
 
   handleModeChange = () => {

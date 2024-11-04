@@ -19,15 +19,17 @@ export const USER_ACTION = {
 };
 
 export const UPDATE_TYPE = {
+  INIT: 'INIT',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   EXTRA: 'EXTRA',
-  INIT: 'INIT',
+  ERROR: 'ERROR',
 };
 
 export const METHOD = {
   GET: 'GET',
   PUT: 'PUT',
   POST: 'POST',
+  DELETE: 'DELETE',
 };

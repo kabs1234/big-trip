@@ -8,6 +8,7 @@ export default class TripFiltersPresenter {
   #tripFiltersView = null;
   #tripEventsModel = null;
   #tripFiltersModel = null;
+  #isInitalized = false;
 
   constructor(tripEventsModel, tripFiltersModel, container) {
     this.#tripEventsModel = tripEventsModel;
@@ -27,17 +28,13 @@ export default class TripFiltersPresenter {
 
     this.#tripFiltersView = new TripFiltersView(this.tripFilter);
 
-    if (this.#tripEventsModel.tripEvents.length === 0) {
+    if (this.#tripEventsModel.tripEvents.length === 0 && !this.#isInitalized) {
       render(this.#tripFiltersView, this.#container);
+      this.#isInitalized = true;
       return;
     }
 
     this.#setEventListeners();
-
-    // if (previousTripFilterView === null) {
-    //   render(this.#tripFiltersView, this.#container);
-    //   return;
-    // }
 
     replace(this.#tripFiltersView, previousTripFilterView);
     remove(previousTripFilterView);

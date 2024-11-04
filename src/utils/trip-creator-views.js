@@ -85,6 +85,10 @@ export const createTripEventTime = (tripEvent) => {
 };
 
 export const createTripEventOffers = (tripEvent, tripOffers) => {
+  if (tripOffers.length === 0) {
+    return '';
+  }
+
   const tripOffer = tripOffers.find((element) => element.type === tripEvent.type).offers;
 
   if (tripOffer.length === 0) {

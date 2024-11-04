@@ -1,21 +1,28 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import * as dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { addZeroBeforeNumber, createHumanizedMonthDayDate } from '../utils/utils.js';
+
+dayjs.extend(duration);
 
 const createTimeDifference = (startDate, endDate) => {
   const ONE_HOUR_IN_MILLISECONDS = 3.6e6;
   const ONE_DAY_IN_MILLISECONDS = 8.64e7;
 
   const timeDifference = dayjs(endDate).diff(dayjs(startDate));
+  const timeDuration = dayjs.duration(timeDifference);
 
   if (timeDifference <= ONE_HOUR_IN_MILLISECONDS) {
     const minutes = timeDifference / (60 * 1000);
     const modifiedMinutes = addZeroBeforeNumber(Math.round(minutes));
 
+    console.log(timeDuration.minutes());
+
     return `${modifiedMinutes}M`;
   } else if (timeDifference <= ONE_DAY_IN_MILLISECONDS) {
     const hours = timeDifference / (60 * 60 * 1000);
     const leftMinutes = (hours - Math.floor(hours)) * 60;
+    console.log(timeDuration.minutes());
 
     const modifiedHours = addZeroBeforeNumber(Math.floor(hours));
     const modifiedMinutes = addZeroBeforeNumber(Math.round(leftMinutes));
