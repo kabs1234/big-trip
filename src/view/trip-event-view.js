@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import * as dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { addZeroBeforeNumber, createHumanizedMonthDayDate } from '../utils/utils.js';
+import { createHumanizedMonthDayDate } from '../utils/utils.js';
 
 dayjs.extend(duration);
 
@@ -11,33 +11,16 @@ const createTimeDifference = (startDate, endDate) => {
 
   const timeDifference = dayjs(endDate).diff(dayjs(startDate));
   const timeDuration = dayjs.duration(timeDifference);
+  const minutes = timeDuration.format('mm');
+  const hours = timeDuration.format('HH');
+  const days = timeDuration.format('DD');
 
   if (timeDifference <= ONE_HOUR_IN_MILLISECONDS) {
-    const minutes = timeDifference / (60 * 1000);
-    const modifiedMinutes = addZeroBeforeNumber(Math.round(minutes));
-
-    console.log(timeDuration.minutes());
-
-    return `${modifiedMinutes}M`;
+    return `${minutes}M`;
   } else if (timeDifference <= ONE_DAY_IN_MILLISECONDS) {
-    const hours = timeDifference / (60 * 60 * 1000);
-    const leftMinutes = (hours - Math.floor(hours)) * 60;
-    console.log(timeDuration.minutes());
-
-    const modifiedHours = addZeroBeforeNumber(Math.floor(hours));
-    const modifiedMinutes = addZeroBeforeNumber(Math.round(leftMinutes));
-
-    return `${modifiedHours}H ${modifiedMinutes}M`;
+    return `${hours}H ${minutes}M`;
   } else {
-    const days = timeDifference / (24 * 60 * 60 * 1000);
-    const leftHours = timeDifference / (60 * 60 * 1000) - Math.floor(days) * 24;
-    const leftMinutes = (leftHours - Math.floor(leftHours)) * 60;
-
-    const modifiedDays = addZeroBeforeNumber(Math.floor(days));
-    const modifiedHours = addZeroBeforeNumber(Math.floor(leftHours));
-    const modifiedMinutes = addZeroBeforeNumber(Math.round(leftMinutes));
-
-    return `${modifiedDays}D ${modifiedHours}H ${modifiedMinutes}M`;
+    return `${days}D ${hours}H ${minutes}M`;
   }
 };
 

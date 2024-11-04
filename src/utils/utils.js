@@ -10,8 +10,6 @@ export const createHumanizedMonthDayDate = (date) => {
   return `${humanizedMonth} ${dayNumber}`;
 };
 
-export const addZeroBeforeNumber = (number) => `0${number}`.slice(-2);
-
 export const filterEventsByFuture = (tripEvents) => {
   const filteredEventsByFuture = tripEvents.filter((tripEvent) => {
     const currentDate = dayjs();
