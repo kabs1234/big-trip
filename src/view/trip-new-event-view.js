@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { createDestinationContainer, createTripEventDestinationList, createTripEventOffers, createTripEventTime, createTripEventTypeCheckbox } from '../utils/trip-creator-views.js';
 import TripEventCreator from '../utils/trip-event-creator.js';
 
