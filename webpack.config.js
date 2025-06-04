@@ -6,27 +6,28 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    clean: true
+    clean: true,
+    publicPath: '/big-trip/'
   },
   devtool: 'source-map',
   plugins: [
     new CopyPlugin({
       patterns: [
-        {from: "public"},
+        { from: "public" },
       ],
     }),
   ],
   module: {
     rules: [
-        {
-          test: /\\.js$/,
-          exclude: /(node_modules)/,
-          use: ['babel-loader']
-        },
-        {
-          test: /\.css$/i,
-          use: ["style-loader", "css-loader"],
-        }
+      {
+        test: /\\.js$/,
+        exclude: /(node_modules)/,
+        use: ['babel-loader']
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      }
     ]
   }
 };
